@@ -155,6 +155,7 @@ export default function HomePage() {
             function_to_verify: functionToVerify,
             instance: instance,
           });
+          
           const newChatHistory: Message[] = trimVerificationMessages(chatHistory);
           setChatHistory(newChatHistory);
 
