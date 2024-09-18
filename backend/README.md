@@ -58,7 +58,9 @@ Set up [Supabase](https://supabase.com/)
 
 5. Run `psql "<COPIED URI>"` (Remember to put the password in place of [YOUR PASSWORD] in the URI) in your terminal at the root of `backend`
 
-e.g. psql postgresql://postgres.jcmefqghesrtgvxzsvak:grae!bfSB@aws-0-us-west-7.pooler.supabase.com:5432/postgres
+```bash
+psql postgresql://postgres.jcmefqghesrtgvxzsvak:grae!bfSB@aws-0-us-west-7.pooler.supabase.com:5432/postgres
+```
 
 **IMPORTANT: You MUST have the inverted commas around the URI. Do not include the square brackets around your password in the URI.**  
 
@@ -66,7 +68,10 @@ e.g. psql postgresql://postgres.jcmefqghesrtgvxzsvak:grae!bfSB@aws-0-us-west-7.p
 7. Close this terminal -> You are done!
 8. Paste the copied URI (Remember to put the password in) into the DATABASE_URL `.env` variable. It should look like `DATABASE_URL=<COPIED URI>` with **no inverted commas** around the URI.
 9. Replace the **prefix** of the copied URI from `postgresql://` to `postgresql+asyncpg://`
+
+```bash
 e.g. postgresql+asyncpg://postgres.jcmefqghesrtgvxzsvak:grae!bfSB@aws-0-us-west-7.pooler.supabase.com:5432/postgres
+```
 
 Get your [OpenAI](https://platform.openai.com/api-keys) api key
 
