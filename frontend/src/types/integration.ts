@@ -14,8 +14,8 @@ export const integrationEnum = z.enum([
   "calendar",
   "linear",
   "slack",
-  // "x",
-  // "sheets",
+  "x",
+  "sheets",
 ]);
 export type Integration = z.infer<typeof integrationEnum>;
 export const integrationsStateSchema = z.object({
