@@ -9,7 +9,8 @@ export default function XAuthDialogContent({
 }: AuthParamProps) {
   return (
     <AuthDialogContent
-      name={capitaliseFirstLetter(integrationEnum.Values.x)}
+      // name={capitaliseFirstLetter(integrationEnum.Values.x)}
+      name="x"
       apiKey={apiKey}
       loginBase={loginBase}
       exchangeBase={exchangeBase}

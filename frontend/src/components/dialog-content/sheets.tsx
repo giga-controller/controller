@@ -9,7 +9,8 @@ export default function GoogleSheetsAuthDialogContent({
 }: AuthParamProps) {
   return (
     <AuthDialogContent
-      name={capitaliseFirstLetter(integrationEnum.Values.sheets)}
+      // name={capitaliseFirstLetter(integrationEnum.Values.sheets)}
+      name="sheets"
       apiKey={apiKey}
       loginBase={loginBase}
       exchangeBase={exchangeBase}
