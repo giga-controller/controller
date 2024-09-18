@@ -1,0 +1,28 @@
+version: '3.8'
+
+networks:
+  controller_network:
+    driver: bridge
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: docker/development/Dockerfile
+    networks:
+      - controller_network
+    container_name: backend_container
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: docker/development/Dockerfile
+    networks:
+      - controller_network
+    container_name: frontend_container
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_BACKEND_URL=http://backend_container:8080

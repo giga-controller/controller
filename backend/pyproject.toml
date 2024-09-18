@@ -1,0 +1,36 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["jinyang628 <chenjinyang4192@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.12.1"
+pydantic = "^2.8.2"
+requests = "^2.32.3"
+python-dotenv = "^1.0.1"
+openai = "^1.40.3"
+black = "^24.8.0"
+isort = "^5.13.2"
+gql = {extras = ["requests"], version = "^3.5.0"}
+fastapi = "^0.112.0"
+uvicorn = "^0.30.5"
+sqlalchemy = "^2.0.32"
+asyncpg = "^0.29.0"
+psycopg2-binary = "^2.9.9"
+supabase = "^2.6.0"
+greenlet = "^3.0.3"
+google-auth-oauthlib = "^1.2.1"
+google-auth-httplib2 = "^0.2.0"
+google-api-python-client = "^2.141.0"
+slack-sdk = "^3.31.0"
+python-twitter-v2 = "^0.9.1"
+tweepy = "^4.14.0"
+
+[tool.isort]
+profile = "black"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

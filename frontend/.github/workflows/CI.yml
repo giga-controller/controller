@@ -1,0 +1,33 @@
+name: CI checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  CI:
+    name: Frontend
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run ESLint
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx
+
+      - name: Run Prettier
+        run: npx prettier --check .
+
+      - name: Type check
+        run: npx tsc --noEmit
+
+      - name: Build UI
+        run: npm run build
