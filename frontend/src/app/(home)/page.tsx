@@ -105,7 +105,18 @@ export default function HomePage() {
     ),
   );
 
-  // TODO: There's probably a bug regarding deleting the messages and not updated the functionToVerify variable properly
+  const trimVerificationMessages = (messages: Message[]): Message[] => {
+    const lastUserMessageIndex = messages
+      .slice()
+      .reverse()
+      .findIndex((msg) => msg.role === roleSchema.Values.user);
+    const trimmedMessages = messages.slice(
+      0,
+      messages.length - lastUserMessageIndex - 1,
+    );
+    return trimmedMessages
+  };
+
   const sendMessage = useMutation({
     mutationFn: async (inputText: string): Promise<Message[]> => {
       if (integrationsState.integrations.length === 0) {
@@ -133,16 +144,7 @@ export default function HomePage() {
           setFunctionToVerify(null);
 
           // Pop messages from the back until the last message that has role == User
-          const lastUserMessageIndex = chatHistory
-            .slice()
-            .reverse()
-            .findIndex((msg) => msg.role === roleSchema.Values.user);
-          console.log(lastUserMessageIndex);
-          const newChatHistory = chatHistory.slice(
-            0,
-            chatHistory.length - lastUserMessageIndex - 1,
-          );
-          setChatHistory(newChatHistory);
+          const newChatHistory: Message[] = trimVerificationMessages(chatHistory);
           return newChatHistory;
         } else if (inputText === userVerificationSchema.Values.YES) {
           const parsedConfirmRequest = confirmRequestSchema.parse({
@@ -153,6 +155,8 @@ export default function HomePage() {
             function_to_verify: functionToVerify,
             instance: instance,
           });
+          const newChatHistory: Message[] = trimVerificationMessages(chatHistory);
+          setChatHistory(newChatHistory);
 
           response = await confirmExecution(parsedConfirmRequest);
         } else {
