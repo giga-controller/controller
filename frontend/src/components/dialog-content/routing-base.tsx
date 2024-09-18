@@ -3,8 +3,8 @@ import GmailAuthDialogContent from "@/components/dialog-content/gmail";
 import GoogleCalendarAuthDialogContent from "@/components/dialog-content/calendar";
 import LinearAuthDialogContent from "@/components/dialog-content/linear";
 import SlackAuthDialogContent from "@/components/dialog-content/slack";
-import XAuthDialogContent from "@/components/dialog-content/x";
-import GoogleSheetsAuthDialogContent from "@/components/dialog-content/sheets";
+// import XAuthDialogContent from "@/components/dialog-content/x";
+// import GoogleSheetsAuthDialogContent from "@/components/dialog-content/sheets";
 
 type RoutingAuthDialogContentProps = {
   apiKey: string;

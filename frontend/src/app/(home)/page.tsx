@@ -67,7 +67,7 @@ export default function HomePage() {
   };
   const [functionToVerify, setFunctionToVerify] = useState<string | null>(null);
 
-  const { integrationsState, setIntegrationsState } = useIntegrationsStore();
+  const { integrationsState, setIntegrationsState, resetIntegrationsState } = useIntegrationsStore();
   const [profileImageUrl, setProfileImageUrl] = useState<string>("");
   const isInitializedRef = useRef(false);
   const clickIntegration = async (integration: Integration) => {

@@ -10,4 +10,5 @@ export const useIntegrationsStore = createPersistedStore(
   integrationsStateSchema,
   "integrationsState",
   "setIntegrationsState",
+  "resetIntegrationsState",
 );

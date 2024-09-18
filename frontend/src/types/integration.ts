@@ -5,17 +5,17 @@ import {
   SiGooglecalendar,
   SiSlack,
   SiLinear,
-  SiGooglesheets,
+  // SiGooglesheets,
 } from "react-icons/si";
-import { FaXTwitter } from "react-icons/fa6";
+// import { FaXTwitter } from "react-icons/fa6";
 
 export const integrationEnum = z.enum([
   "gmail",
   "calendar",
   "linear",
   "slack",
-  "x",
-  "sheets",
+  // "x",
+  // "sheets",
 ]);
 export type Integration = z.infer<typeof integrationEnum>;
 export const integrationsStateSchema = z.object({
@@ -37,8 +37,8 @@ export const integrationIconMapping: IntegrationIconMapping = {
   calendar: SiGooglecalendar,
   linear: SiLinear,
   slack: SiSlack,
-  x: FaXTwitter,
-  sheets: SiGooglesheets,
+  // x: FaXTwitter,
+  // sheets: SiGooglesheets,
 };
 
 export type AuthParamProps = {
