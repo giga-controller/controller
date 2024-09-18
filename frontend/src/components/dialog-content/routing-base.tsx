@@ -44,15 +44,15 @@ export default function RoutingAuthDialogContent({
         />
       );
       break;
-    case integrationEnum.Values.x:
-      dialogContent = (
-        <XAuthDialogContent
-          apiKey={apiKey}
-          loginBase="https://twitter.com/i/oauth2/authorize"
-          exchangeBase="https://api.x.com/2/oauth2/token"
-        />
-      );
-      break;
+    // case integrationEnum.Values.x:
+    //   dialogContent = (
+    //     <XAuthDialogContent
+    //       apiKey={apiKey}
+    //       loginBase="https://twitter.com/i/oauth2/authorize"
+    //       exchangeBase="https://api.x.com/2/oauth2/token"
+    //     />
+    //   );
+    //   break;
     case integrationEnum.Values.calendar:
       dialogContent = (
         <GoogleCalendarAuthDialogContent
@@ -62,15 +62,15 @@ export default function RoutingAuthDialogContent({
         />
       );
       break;
-    case integrationEnum.Values.sheets:
-      dialogContent = (
-        <GoogleSheetsAuthDialogContent
-          apiKey={apiKey}
-          loginBase="https://accounts.google.com/o/oauth2/v2/auth"
-          exchangeBase="https://oauth2.googleapis.com/token"
-        />
-      );
-      break;
+    // case integrationEnum.Values.sheets:
+    //   dialogContent = (
+    //     <GoogleSheetsAuthDialogContent
+    //       apiKey={apiKey}
+    //       loginBase="https://accounts.google.com/o/oauth2/v2/auth"
+    //       exchangeBase="https://oauth2.googleapis.com/token"
+    //     />
+    //   );
+    //   break;
   }
   return dialogContent;
 }
