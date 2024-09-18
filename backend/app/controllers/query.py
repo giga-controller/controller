@@ -1,6 +1,6 @@
 import logging
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ValidationError
 
@@ -26,7 +26,8 @@ class QueryController:
         router = self.router
 
         @router.post("")
-        async def query(input: QueryRequest) -> JSONResponse:
+        async def query(request: Request) -> JSONResponse:
+            input = QueryRequest.model_validate(await request.json())
             try:
                 response: QueryResponse = await self.service.query(
                     message=input.message,

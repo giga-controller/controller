@@ -8,6 +8,7 @@ class Integration(StrEnum):
     CALENDAR = "calendar"
     LINEAR = "linear"
     SLACK = "slack"
+    X = "x"
     NONE = "none"
 
 
