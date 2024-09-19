@@ -96,7 +96,7 @@ export default function ChatContainer({
   };
 
   return (
-    <div>
+    <div className="pt-6">
       {chatHistory.map((message: Message, index: number) => (
         <div key={index}>
           <div
