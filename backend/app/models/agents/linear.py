@@ -18,6 +18,7 @@ from app.models.integrations.linear import (
     LinearGetIssuesRequest,
     LinearIssue,
     LinearUpdateIssuesRequest,
+    LinearUpdateIssuesStateRequest,
 )
 from app.models.query.base import Message, Role
 
@@ -49,7 +50,7 @@ class LinearPostRequestAgent(Agent):
                             agent=MAIN_TRIAGE_AGENT,
                             message=Message(
                                 role=Role.ASSISTANT,
-                                content="Please confirm that you want to create an issue containing the following fields (Yes/No)",
+                                content="Please confirm that you want to create a Linear issue containing the following fields (Yes/No)",
                                 data=[
                                     LinearCreateIssueRequest.model_validate(
                                         response.choices[0]
@@ -183,24 +184,24 @@ class LinearUpdateRequestAgent(Agent):
         response, function_name = self.get_response(chat_history=chat_history)
 
         match function_name:
-            case LinearUpdateIssuesRequest.__name__:
+            case LinearUpdateIssuesStateRequest.__name__:
                 if enable_verification:
                     return AgentResponse(
                         agent=MAIN_TRIAGE_AGENT,
                         message=Message(
                             role=Role.ASSISTANT,
-                            content="Please confirm that you want to update issues containing the following fields (Yes/No)",
+                            content="Please confirm that you want to update the state of Linear issues containing the following fields (Yes/No)",
                             data=[
-                                LinearUpdateIssuesRequest.model_validate(
+                                LinearUpdateIssuesStateRequest.model_validate(
                                     response.choices[0]
                                     .message.tool_calls[0]
                                     .function.parsed_arguments
                                 ).model_dump()
                             ],
                         ),
-                        function_to_verify=LinearUpdateIssuesRequest.__name__,
+                        function_to_verify=LinearUpdateIssuesStateRequest.__name__,
                     )
-                return update_issues(
+                return update_issues_state(
                     request=response.choices[0]
                     .message.tool_calls[0]
                     .function.parsed_arguments,
@@ -210,13 +211,13 @@ class LinearUpdateRequestAgent(Agent):
                 raise InferenceError(f"Function {function_name} not supported")
 
 
-def update_issues(
-    request: LinearUpdateIssuesRequest, access_token: str
+def update_issues_state(
+    request: LinearUpdateIssuesStateRequest, access_token: str
 ) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
-    updated_issues: list[LinearIssue] = linear_client.update_issues(request=request)
+    updated_issues: list[LinearIssue] = linear_client.update_issues_state(request=request)
     if not updated_issues:
         return AgentResponse(
             agent=SUMMARY_AGENT,
@@ -230,7 +231,7 @@ def update_issues(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
             role=Role.ASSISTANT,
-            content=f"The following Linear issues have been successfully updated",
+            content=f"The following Linear issues have their state successfully updated",
             data=[issue.model_dump() for issue in updated_issues],
         ),
     )
@@ -246,7 +247,9 @@ LINEAR_UPDATE_REQUEST_AGENT = LinearUpdateRequestAgent(
 2. Be careful not to mix up the "number" and "id" of the issue. The "id" is an uuid but the "number" is an integer.
 3. Be as restrictive as possible when filtering for the issues to update, which means you should provide as many filter conditions as possible.     
 4. Set use_and_clause to True if all filter conditions must be met, and False if meeting any single condition is sufficient.""",
-    tools=[openai.pydantic_function_tool(LinearUpdateIssuesRequest)],
+    tools=[
+        openai.pydantic_function_tool(LinearUpdateIssuesStateRequest)
+    ],
 )
 
 ##############################################
@@ -271,7 +274,7 @@ class LinearDeleteRequestAgent(Agent):
                         agent=MAIN_TRIAGE_AGENT,
                         message=Message(
                             role=Role.ASSISTANT,
-                            content="Please confirm that you want to delete issues containing the following fields (Yes/No)",
+                            content="Please confirm that you want to delete Linear issues containing the following fields (Yes/No)",
                             data=[
                                 LinearDeleteIssuesRequest.model_validate(
                                     response.choices[0]

@@ -2,23 +2,19 @@ import asyncio
 import logging
 from typing import Optional
 
-from pydantic import BaseModel
-
 from app.connectors.native.stores.token import Token
 from app.exceptions.exception import DatabaseError, PipelineError
 from app.models.agents.base.template import Agent, AgentResponse
 from app.models.agents.base.triage import TriageAgent
 from app.models.agents.gmail import (
-    GMAIL_TRIAGE_AGENT,
     delete_emails,
     mark_as_read,
     send_email,
 )
 from app.models.agents.linear import (
-    LINEAR_TRIAGE_AGENT,
     create_issue,
     delete_issues,
-    update_issues,
+    update_issues_state,
 )
 from app.models.agents.main import MAIN_TRIAGE_AGENT
 from app.models.agents.slack import send_message
@@ -31,7 +27,7 @@ from app.models.integrations.gmail import (
 from app.models.integrations.linear import (
     LinearCreateIssueRequest,
     LinearDeleteIssuesRequest,
-    LinearUpdateIssuesRequest,
+    LinearUpdateIssuesStateRequest,
 )
 from app.models.integrations.slack import SlackSendMessageRequest
 from app.models.query.base import Message, QueryResponse, Role
@@ -115,9 +111,9 @@ class QueryService:
                     request=LinearCreateIssueRequest.model_validate(client_argument),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
-            case LinearUpdateIssuesRequest.__name__:
-                client_response = update_issues(
-                    request=LinearUpdateIssuesRequest.model_validate(client_argument),
+            case LinearUpdateIssuesStateRequest.__name__:
+                client_response = update_issues_state(
+                    request=LinearUpdateIssuesStateRequest.model_validate(client_argument),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearDeleteIssuesRequest.__name__:

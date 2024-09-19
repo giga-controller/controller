@@ -11,7 +11,7 @@ export default function VerificationCheckbox({
   updateEnableVerification,
 }: VerificationCheckboxProps) {
   return (
-    <div className="flex space-x-2">
+    <div className="flex space-x-2 bg-white text-black dark:bg-black dark:text-white p-1 rounded">
       <Checkbox
         id="enable-verification"
         checked={enableVerification}

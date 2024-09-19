@@ -54,6 +54,9 @@ export default function HomePage() {
   const [chatHistory, setChatHistory] = useState<Message[]>([]);
   const updateChatHistory = (input: Message[]) => {
     setChatHistory(input);
+    if (input.length == 0) {
+      setFunctionToVerify(null);
+    }
   };
 
   const [instance, setInstance] = useState<string | null>(null);

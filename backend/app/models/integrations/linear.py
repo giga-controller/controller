@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, model_validator
 
 
-class Status(StrEnum):
+class State(StrEnum):
     BACKLOG = "Backlog"
     TODO = "Todo"
     IN_PROGRESS = "In Progress"
@@ -12,10 +12,6 @@ class Status(StrEnum):
     DONE = "Done"
     CANCELED = "Canceled"
     DUPLICATE = "Duplicate"
-
-
-class State(BaseModel):
-    name: Status
 
 
 class Label(BaseModel):
@@ -52,7 +48,7 @@ class LinearIssue(BaseModel):
     estimate: Optional[
         int
     ]  # Assume T-Shirt sizes for now, which is represented as an integer in the API
-    state: Optional[Status]
+    state: Optional[State]
     assignee: Optional[str]
     creator: Optional[str]
     labels: Optional[list[str]]
@@ -71,7 +67,7 @@ class LinearIssueQuery(BaseModel):
     )
     title: Optional[list[str]]
     number: Optional[list[int]]
-    state: Optional[list[Status]]
+    state: Optional[list[State]]
     assignee: Optional[list[str]]
     creator: Optional[list[str]]
     project: Optional[list[str]]
@@ -123,14 +119,14 @@ class LinearFilterIssuesRequest(BaseModel):
     issue_ids: Optional[list[str]] = Field(
         description="List of issue ids to filter issues with, if any"
     )
-    queries: Optional[list[LinearIssueQuery]] = Field(
-        description="Queries to filter issues with, if any. Each element in the list represents the parameters that make up one query."
+    query: Optional[LinearIssueQuery] = Field(
+        description="Query to filter issues with, if any"
     )
 
     # Note that we dont throw an error if both are provided, because we will just prioritise reading from the issue_ids array
     @model_validator(mode="after")
     def check_at_least_one(self):
-        if not self.issue_ids and not self.queries:
+        if not self.issue_ids and not self.query:
             raise ValueError(
                 "At least one of issue_ids or filter_conditions must be provided"
             )
@@ -151,7 +147,7 @@ class LinearCreateIssueRequest(BaseModel):
     description: Optional[str]
     priority: Optional[int]
     estimate: Optional[int]
-    state: Optional[Status]
+    state: Optional[State]
     assignee: Optional[str]
     creator: Optional[str]
     labels: Optional[Labels]
@@ -160,6 +156,9 @@ class LinearCreateIssueRequest(BaseModel):
     project: Optional[str]
 
 
+class LinearUpdateIssuesStateRequest(LinearFilterIssuesRequest):
+    updated_state: State = Field(description="The new state to update the issues to")
+    
 # Might need to revisit this because u want to update different issues differently, so make two calls?
 class LinearUpdateIssuesRequest(BaseModel):
     filter_conditions: LinearFilterIssuesRequest
