@@ -10,7 +10,7 @@ export async function GET(request: Request) {
   const storedState = cookies().get("authState")?.value;
   const storedClientId = cookies().get("clientId")?.value;
   const storedClientSecret = cookies().get("clientSecret")?.value;
-  const storedExpandApiKey = cookies().get("expandApiKey")?.value;
+  const storedControllerApiKey = cookies().get("controllerApiKey")?.value;
   const storedExchangeBase = cookies().get("exchangeBase")?.value || "";
   const storedTableName = cookies().get("tableName")?.value;
   const storedRedirectUri = cookies().get("redirect_uri")?.value;
@@ -79,7 +79,7 @@ export async function GET(request: Request) {
     console.log(tokenData);
 
     const parsedTokenRequest = tokenPostRequestSchema.parse({
-      api_key: storedExpandApiKey,
+      api_key: storedControllerApiKey,
       access_token: accessToken,
       refresh_token: refreshToken,
       client_id: storedClientId,

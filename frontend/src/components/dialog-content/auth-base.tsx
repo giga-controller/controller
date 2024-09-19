@@ -68,7 +68,7 @@ export default function AuthDialogContent({
 
   useEffect(() => {
     // setOauthUrl(
-    //   `/api/oauth2/login?clientId=${encodeURIComponent(clientId)}&clientSecret=${encodeURIComponent(clientSecret)}&scope=${encodeURIComponent(scope)}&expandApiKey=${encodeURIComponent(apiKey)}&tableName=${encodeURIComponent(name.toLowerCase())}&loginBase=${encodeURIComponent(loginBase)}&exchangeBase=${encodeURIComponent(exchangeBase)}&redirect_uri=${encodeURIComponent(`${process.env.NEXT_PUBLIC_DEFAULT_SITE_URL}/api/oauth2/callback`)}&code_challenge=challenge&code_challenge_method=plain`,
+    //   `/api/oauth2/login?clientId=${encodeURIComponent(clientId)}&clientSecret=${encodeURIComponent(clientSecret)}&scope=${encodeURIComponent(scope)}&controllerApiKey=${encodeURIComponent(apiKey)}&tableName=${encodeURIComponent(name.toLowerCase())}&loginBase=${encodeURIComponent(loginBase)}&exchangeBase=${encodeURIComponent(exchangeBase)}&redirect_uri=${encodeURIComponent(`${process.env.NEXT_PUBLIC_DEFAULT_SITE_URL}/api/oauth2/callback`)}&code_challenge=challenge&code_challenge_method=plain`,
     // );
 
     function generateRandomString(length: number): string {
@@ -101,7 +101,7 @@ export default function AuthDialogContent({
     sha256(codeVerifier).then((hash) => {
       const codeChallenge = base64UrlEncode(hash);
       setOauthUrl(
-        `/api/oauth2/login?clientId=${clientId}&clientSecret=${clientSecret}&scope=${scope}&expandApiKey=${apiKey}&tableName=${name.toLowerCase()}&loginBase=${loginBase}&exchangeBase=${exchangeBase}&redirect_uri=${`${process.env.NEXT_PUBLIC_DEFAULT_SITE_URL}/api/oauth2/callback`}&code_verifier=${codeVerifier}&code_challenge=${codeChallenge}&code_challenge_method=S256&verifierRequired=${verifierRequired}`,
+        `/api/oauth2/login?clientId=${clientId}&clientSecret=${clientSecret}&scope=${scope}&controllerApiKey=${apiKey}&tableName=${name.toLowerCase()}&loginBase=${loginBase}&exchangeBase=${exchangeBase}&redirect_uri=${`${process.env.NEXT_PUBLIC_DEFAULT_SITE_URL}/api/oauth2/callback`}&code_verifier=${codeVerifier}&code_challenge=${codeChallenge}&code_challenge_method=S256&verifierRequired=${verifierRequired}`,
       );
     });
   }, [clientId, clientSecret, apiKey, scope, name, loginBase, exchangeBase]);

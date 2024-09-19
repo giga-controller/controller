@@ -50,9 +50,9 @@ SUMMARY_AGENT = SummaryAgent(
     name="Summary Agent",
     integration_group=Integration.NONE,
     model=OPENAI_GPT4O_MINI,
-    system_prompt="""You are an expert at summarizing conversations between a human user and an AI agent called Expand. Create a clear, concise summary of actions taken and results achieved in no more than a few lines. Include:
+    system_prompt="""You are an expert at summarizing conversations between a human user and an AI agent named Controller. Create a clear, concise summary of actions taken and results achieved in no more than a few lines. Include:
 - Brief overview of accomplishments or attempts
-- Main tasks executed by Expand
+- Main tasks executed by Controller
 - Important results or information obtained
 - Any errors or failures, or suggested next steps if no tasks were executed, such as asking the user to provide more information in the instruction
 Use simple language and avoid technical jargon. You may use bullet points, dashes or emojis for clarity. Your response will be formatted markdown-style, so make sure to use appropriate markdown syntax for headings, lists, and other formatting to make it more readable.""".strip(),

@@ -55,7 +55,7 @@ class UserService:
             },
         )
         if len(result) < 1:
-            raise ValueError("Invalid Expand API key")
+            raise ValueError("Invalid Controller API key")
         elif len(result) > 1:
             raise ValueError("Multiple users found with the same API key")
         return result[0]

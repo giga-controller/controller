@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   const clientSecret = searchParams.get("clientSecret");
 
   // We need the apiKey of the user so that we know which user to associate the access token and refresh token with
-  const expandApiKey = searchParams.get("expandApiKey") || "";
+  const controllerApiKey = searchParams.get("controllerApiKey") || "";
 
   // We need to know which scopes the user has authorized
   const scope = searchParams.get("scope") || "";
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
   cookies().set("authState", state, { httpOnly: true, secure: true });
   cookies().set("clientId", clientId, { httpOnly: true, secure: true });
   cookies().set("clientSecret", clientSecret, { httpOnly: true, secure: true });
-  cookies().set("expandApiKey", expandApiKey, { httpOnly: true, secure: true });
+  cookies().set("controllerApiKey", controllerApiKey, { httpOnly: true, secure: true });
   cookies().set("tableName", tableName, { httpOnly: true, secure: true });
   cookies().set("exchangeBase", exchangeBase, { httpOnly: true, secure: true });
   cookies().set("redirect_uri", redirect_uri, { httpOnly: true, secure: true });
