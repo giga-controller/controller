@@ -158,8 +158,6 @@ class LinearCreateIssueRequest(BaseModel):
 
 class LinearUpdateIssuesStateRequest(LinearFilterIssuesRequest):
     updated_state: State = Field(description="The new state to update the issues to")
-    
-# Might need to revisit this because u want to update different issues differently, so make two calls?
-class LinearUpdateIssuesRequest(BaseModel):
-    filter_conditions: LinearFilterIssuesRequest
-    update_conditions: LinearCreateIssueRequest
+
+class LinearUpdateIssuesAssigneeRequest(LinearFilterIssuesRequest):
+    updated_assignee: str = Field(description="The new assignee to assign the issues to")

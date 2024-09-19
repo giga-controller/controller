@@ -8,10 +8,11 @@ from gql.transport.requests import RequestsHTTPTransport
 from app.models.integrations.linear import (
     LinearCreateIssueRequest,
     LinearDeleteIssuesRequest,
+    LinearFilterIssuesRequest,
     LinearGetIssuesRequest,
     LinearIssue,
     LinearIssueQuery,
-    LinearUpdateIssuesRequest,
+    LinearUpdateIssuesAssigneeRequest,
     LinearUpdateIssuesStateRequest,
 )
 
@@ -283,57 +284,32 @@ class LinearClient:
             validated_results.append(_flatten_linear_response_issue(issue))
         return validated_results
 
-    
-    def update_issues_state(self, request: LinearUpdateIssuesStateRequest) -> list[LinearIssue]:
+    def update_issues(self, request: LinearFilterIssuesRequest) -> list[LinearIssue]:
         variables = {}
         validated_results: list[LinearIssue] = []
 
         issues_to_update = self.get_issues(request=request)
         
-        MUTATION_NAME: str = "issueUpdate"
-        mutation = gql(
-            f"""
-            mutation UpdateIssueState($id: String!, $update: IssueUpdateInput!) {{
-                {MUTATION_NAME}(id: $id, input: $update) {{
-                    success
-                    issue {{
-                        id
-                        number
-                        title
-                        description
-                        priority
-                        estimate
-                        state {{ name }}
-                        assignee {{ name }}
-                        creator {{ name }}
-                        labels {{ nodes {{ name }} }}
-                        createdAt
-                        updatedAt
-                        dueDate
-                        cycle {{ number }}
-                        project {{ name }}
-                        comments {{ nodes {{ body user {{ name }} }} }}
-                        url
-                    }}
-                }}
-            }}
-            """
-        )
-
+        mutation_name: str = "issueUpdate"
+        mutation = _get_update_mutation(mutation_name=mutation_name)
+        
         for issue in issues_to_update:
             variables["id"] = issue.id
             variables["update"] = {}
-
-            variables["update"]["stateId"] = self.get_state_id_by_name(
-                request.updated_state.value
-            )
-
+            if isinstance(request, LinearUpdateIssuesStateRequest):
+                variables["update"]["stateId"] = self.get_state_id_by_name(
+                    name=request.updated_state.value
+                )
+            elif isinstance(request, LinearUpdateIssuesAssigneeRequest):
+                variables["update"]["assigneeId"] = self.get_id_by_name(
+                    name=request.updated_assignee, target="users"
+                )
             result = self.client.execute(mutation, variable_values=variables)
 
             validated_results.append(
-                _flatten_linear_response_issue(result[MUTATION_NAME]["issue"])
+                _flatten_linear_response_issue(result[mutation_name]["issue"])
             )
-
+        
         return validated_results
         
         
@@ -553,3 +529,35 @@ def _flatten_linear_response_issue(issue: dict) -> LinearIssue:
         issue["creator"] = issue["creator"]["name"]
 
     return LinearIssue.model_validate(issue)
+
+
+def _get_update_mutation(mutation_name: str) -> str:
+    mutation = gql(
+        f"""
+        mutation UpdateIssueState($id: String!, $update: IssueUpdateInput!) {{
+            {mutation_name}(id: $id, input: $update) {{
+                success
+                issue {{
+                    id
+                    number
+                    title
+                    description
+                    priority
+                    estimate
+                    state {{ name }}
+                    assignee {{ name }}
+                    creator {{ name }}
+                    labels {{ nodes {{ name }} }}
+                    createdAt
+                    updatedAt
+                    dueDate
+                    cycle {{ number }}
+                    project {{ name }}
+                    comments {{ nodes {{ body user {{ name }} }} }}
+                    url
+                }}
+            }}
+        }}
+        """
+    )
+    return mutation

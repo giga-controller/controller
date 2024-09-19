@@ -14,7 +14,7 @@ from app.models.agents.gmail import (
 from app.models.agents.linear import (
     create_issue,
     delete_issues,
-    update_issues_state,
+    update_issues,
 )
 from app.models.agents.main import MAIN_TRIAGE_AGENT
 from app.models.agents.slack import send_message
@@ -27,6 +27,7 @@ from app.models.integrations.gmail import (
 from app.models.integrations.linear import (
     LinearCreateIssueRequest,
     LinearDeleteIssuesRequest,
+    LinearUpdateIssuesAssigneeRequest,
     LinearUpdateIssuesStateRequest,
 )
 from app.models.integrations.slack import SlackSendMessageRequest
@@ -112,8 +113,15 @@ class QueryService:
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesStateRequest.__name__:
-                client_response = update_issues_state(
+                client_response = update_issues(
                     request=LinearUpdateIssuesStateRequest.model_validate(client_argument),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesAssigneeRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesAssigneeRequest.model_validate(
+                        client_argument
+                    ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearDeleteIssuesRequest.__name__:
