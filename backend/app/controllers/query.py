@@ -4,8 +4,8 @@ from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ValidationError
 
-from app.models.query.confirm import ConfirmRequest
 from app.models.query.base import QueryRequest, QueryResponse
+from app.models.query.confirm import ConfirmRequest
 from app.services.query import QueryService
 
 logging.basicConfig(level=logging.INFO)
