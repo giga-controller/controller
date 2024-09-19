@@ -100,7 +100,7 @@ export default function HomePage() {
       0,
       messages.length - lastUserMessageIndex - 1,
     );
-    return trimmedMessages
+    return trimmedMessages;
   };
 
   const sendMessage = useMutation({
@@ -130,7 +130,8 @@ export default function HomePage() {
           setFunctionToVerify(null);
 
           // Pop messages from the back until the last message that has role == User
-          const newChatHistory: Message[] = trimVerificationMessages(chatHistory);
+          const newChatHistory: Message[] =
+            trimVerificationMessages(chatHistory);
           return newChatHistory;
         } else if (inputText === userVerificationSchema.Values.YES) {
           const parsedConfirmRequest = confirmRequestSchema.parse({
@@ -141,8 +142,9 @@ export default function HomePage() {
             function_to_verify: functionToVerify,
             instance: instance,
           });
-          
-          const newChatHistory: Message[] = trimVerificationMessages(chatHistory);
+
+          const newChatHistory: Message[] =
+            trimVerificationMessages(chatHistory);
           setChatHistory(newChatHistory);
 
           response = await confirmExecution(parsedConfirmRequest);
@@ -216,7 +218,7 @@ export default function HomePage() {
       />
     ),
   );
-  
+
   return (
     <div className="flex flex-row h-[calc(100vh-150px)] justify-center">
       <div className="w-[150px]">
