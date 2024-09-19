@@ -67,7 +67,7 @@ export default function HomePage() {
   };
   const [functionToVerify, setFunctionToVerify] = useState<string | null>(null);
 
-  const { integrationsState, setIntegrationsState, resetIntegrationsState } = useIntegrationsStore();
+  const { integrationsState, setIntegrationsState } = useIntegrationsStore();
   const [profileImageUrl, setProfileImageUrl] = useState<string>("");
   const isInitializedRef = useRef(false);
   const clickIntegration = async (integration: Integration) => {
@@ -90,20 +90,6 @@ export default function HomePage() {
       ),
     });
   };
-  const integrationIcons = Object.values(integrationEnum.Values).map(
-    (integration) => (
-      <IntegrationIcon
-        key={`${integration}_icon`}
-        integration={integration as Integration}
-        isHighlighted={integrationsState.integrations.includes(
-          integration as Integration,
-        )}
-        apiKey={apiKey ?? ""}
-        clickIntegration={clickIntegration}
-        removeIntegration={removeIntegration}
-      />
-    ),
-  );
 
   const trimVerificationMessages = (messages: Message[]): Message[] => {
     const lastUserMessageIndex = messages
@@ -216,6 +202,21 @@ export default function HomePage() {
     initializeUser();
   }, [isLoaded, user]);
 
+  const integrationIcons = Object.values(integrationEnum.Values).map(
+    (integration) => (
+      <IntegrationIcon
+        key={`${integration}_icon`}
+        integration={integration as Integration}
+        isHighlighted={integrationsState.integrations.includes(
+          integration as Integration,
+        )}
+        apiKey={apiKey ?? ""}
+        clickIntegration={clickIntegration}
+        removeIntegration={removeIntegration}
+      />
+    ),
+  );
+  
   return (
     <div className="flex flex-row h-[calc(100vh-150px)] justify-center">
       <div className="w-[150px]">
