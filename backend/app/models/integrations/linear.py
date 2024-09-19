@@ -61,6 +61,20 @@ class LinearIssue(BaseModel):
     url: Optional[str]
 
 
+class LinearCreateIssueRequest(BaseModel):
+    title: Optional[str]
+    description: Optional[str]
+    priority: Optional[int]
+    estimate: Optional[int]
+    state: Optional[State]
+    assignee: Optional[str]
+    creator: Optional[str]
+    labels: Optional[Labels]
+    dueDate: Optional[str]
+    cycle: Optional[int]
+    project: Optional[str]
+
+
 class LinearIssueQuery(BaseModel):
     use_and_clause: bool = Field(
         description="True if ALL conditions must be met for the issue to be selected, False if ANY condition being met is sufficient"
@@ -142,22 +156,14 @@ class LinearDeleteIssuesRequest(LinearFilterIssuesRequest):
     pass
 
 
-class LinearCreateIssueRequest(BaseModel):
-    title: Optional[str]
-    description: Optional[str]
-    priority: Optional[int]
-    estimate: Optional[int]
-    state: Optional[State]
-    assignee: Optional[str]
-    creator: Optional[str]
-    labels: Optional[Labels]
-    dueDate: Optional[str]
-    cycle: Optional[int]
-    project: Optional[str]
-
-
 class LinearUpdateIssuesStateRequest(LinearFilterIssuesRequest):
     updated_state: State = Field(description="The new state to update the issues to")
 
+
 class LinearUpdateIssuesAssigneeRequest(LinearFilterIssuesRequest):
-    updated_assignee: str = Field(description="The new assignee to assign the issues to")
+    updated_assignee: str = Field(
+        description="The new assignee to assign the issues to"
+    )
+
+
+cla

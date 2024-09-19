@@ -221,11 +221,9 @@ class LinearUpdateRequestAgent(Agent):
                     )
             case _:
                 raise InferenceError(f"Function {function_name} not supported")
-            
+
         return update_issues(
-            request=response.choices[0]
-            .message.tool_calls[0]
-            .function.parsed_arguments,
+            request=response.choices[0].message.tool_calls[0].function.parsed_arguments,
             access_token=access_token,
         )
 
@@ -238,7 +236,6 @@ def update_issues(
     )
     updated_issues: list[LinearIssue] = linear_client.update_issues(request=request)
 
-    
     if not updated_issues:
         return AgentResponse(
             agent=SUMMARY_AGENT,

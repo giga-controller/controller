@@ -289,10 +289,10 @@ class LinearClient:
         validated_results: list[LinearIssue] = []
 
         issues_to_update = self.get_issues(request=request)
-        
+
         mutation_name: str = "issueUpdate"
         mutation = _get_update_mutation(mutation_name=mutation_name)
-        
+
         for issue in issues_to_update:
             variables["id"] = issue.id
             variables["update"] = {}
@@ -309,10 +309,9 @@ class LinearClient:
             validated_results.append(
                 _flatten_linear_response_issue(result[mutation_name]["issue"])
             )
-        
+
         return validated_results
-        
-        
+
     # def update_issues(self, request: LinearUpdateIssuesRequest) -> list[LinearIssue]:
     #     variables = {}
     #     validated_results: list[LinearIssue] = []

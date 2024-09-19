@@ -6,16 +6,8 @@ from app.connectors.native.stores.token import Token
 from app.exceptions.exception import DatabaseError, PipelineError
 from app.models.agents.base.template import Agent, AgentResponse
 from app.models.agents.base.triage import TriageAgent
-from app.models.agents.gmail import (
-    delete_emails,
-    mark_as_read,
-    send_email,
-)
-from app.models.agents.linear import (
-    create_issue,
-    delete_issues,
-    update_issues,
-)
+from app.models.agents.gmail import delete_emails, mark_as_read, send_email
+from app.models.agents.linear import create_issue, delete_issues, update_issues
 from app.models.agents.main import MAIN_TRIAGE_AGENT
 from app.models.agents.slack import send_message
 from app.models.integrations.base import Integration
@@ -114,7 +106,9 @@ class QueryService:
                 )
             case LinearUpdateIssuesStateRequest.__name__:
                 client_response = update_issues(
-                    request=LinearUpdateIssuesStateRequest.model_validate(client_argument),
+                    request=LinearUpdateIssuesStateRequest.model_validate(
+                        client_argument
+                    ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesAssigneeRequest.__name__:
