@@ -6,7 +6,6 @@ type VerificationCheckboxProps = {
   updateEnableVerification: (input: boolean) => void;
 };
 
-
 export default function VerificationCheckbox({
   enableVerification,
   updateEnableVerification,

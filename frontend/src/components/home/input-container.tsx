@@ -27,9 +27,8 @@ export default function InputContainer({
         textareaRef.current.blur();
         return;
       }
-      textareaRef.current.focus()
+      textareaRef.current.focus();
     }
-
   }, [functionToVerify, isResponseFetching]);
 
   const handleSendMessage = () => {
@@ -45,8 +44,8 @@ export default function InputContainer({
   };
 
   const isTextAreaDisabled = () => {
-    return isResponseFetching || (functionToVerify !== null)
-  }
+    return isResponseFetching || functionToVerify !== null;
+  };
 
   useEffect(() => {
     const handleKeyDown = async (event: KeyboardEvent) => {

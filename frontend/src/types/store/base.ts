@@ -2,7 +2,12 @@ import { z } from "zod";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export const createPersistedStore = <T, K extends string, S extends string, R extends string>(
+export const createPersistedStore = <
+  T,
+  K extends string,
+  S extends string,
+  R extends string,
+>(
   storeName: string,
   defaultState: T,
   stateSchema: z.ZodSchema<T>,
@@ -32,8 +37,9 @@ export const createPersistedStore = <T, K extends string, S extends string, R ex
               }
 
               return { ...store, [stateKey]: updatedState };
-          }),
-          [resetStateKey]: () => set((store) => ({ ...store, [stateKey]: defaultState })),
+            }),
+          [resetStateKey]: () =>
+            set((store) => ({ ...store, [stateKey]: defaultState })),
         }) as StoreType,
       {
         name: storeName,
