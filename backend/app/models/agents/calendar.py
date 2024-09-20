@@ -38,7 +38,7 @@ class CalendarCreateEventAgent(Agent):
         enable_verification: bool,
     ) -> AgentResponse:
         response, function_name = self.get_response(chat_history=chat_history)
-        
+
         try:
             match function_name:
                 case CalendarCreateEventRequest.__name__:
@@ -56,20 +56,23 @@ class CalendarCreateEventAgent(Agent):
                                     ).model_dump()
                                 ],
                             ),
-                            function_to_verify=CalendarCreateEventRequest.__name__
+                            function_to_verify=CalendarCreateEventRequest.__name__,
                         )
                     return create_calendar_event(
-                        request=response.choices[0].message.tool_calls[0].function.parsed_arguments,
+                        request=response.choices[0]
+                        .message.tool_calls[0]
+                        .function.parsed_arguments,
                         access_token=access_token,
                         refresh_token=refresh_token,
                         client_id=client_id,
-                        client_secret=client_secret
+                        client_secret=client_secret,
                     )
                 case _:
                     raise InferenceError(f"Function {function_name} not supported")
         except Exception as e:
             log.error(f"Error in CalendarCreateEventAgent: {e}")
             raise e
+
 
 def create_calendar_event(
     request: CalendarCreateEventRequest,
@@ -84,9 +87,7 @@ def create_calendar_event(
         client_id=client_id,
         client_secret=client_secret,
     )
-    created_event: CalendarEvent = calendar_client.create_event(
-        request=request
-    )
+    created_event: CalendarEvent = calendar_client.create_event(request=request)
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -95,15 +96,14 @@ def create_calendar_event(
             data=[created_event.model_dump()],
         ),
     )
-    
+
+
 CALENDAR_CREATE_EVENT_AGENT = CalendarCreateEventAgent(
     name="Create Event Agent",
     integration_group=Integration.CALENDAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at creating events in Google Calendar. Your task is to help a user create an event by supplying the correct request parameters to the Google Calendar API.",
-    tools=[
-        openai.pydantic_function_tool(CalendarCreateEventRequest)
-    ],
+    tools=[openai.pydantic_function_tool(CalendarCreateEventRequest)],
 )
 
 
@@ -122,11 +122,13 @@ class CalendarGetEventsAgent(Agent):
             match function_name:
                 case CalendarGetEventsRequest.__name__:
                     return get_calendar_events(
-                        request=response.choices[0].message.tool_calls[0].function.parsed_arguments,
+                        request=response.choices[0]
+                        .message.tool_calls[0]
+                        .function.parsed_arguments,
                         access_token=access_token,
                         refresh_token=refresh_token,
                         client_id=client_id,
-                        client_secret=client_secret
+                        client_secret=client_secret,
                     )
                 case _:
                     raise InferenceError(f"Function {function_name} not supported")
@@ -134,13 +136,14 @@ class CalendarGetEventsAgent(Agent):
             log.error(f"Error in CalendarGetEventsAgent: {e}")
             raise e
 
+
 def get_calendar_events(
     request: CalendarGetEventsRequest,
     access_token: str,
     refresh_token: str,
     client_id: str,
     client_secret: str,
-    enable_verification: bool
+    enable_verification: bool,
 ) -> AgentResponse:
     calendar_client = CalendarClient(
         access_token=access_token,
@@ -148,9 +151,7 @@ def get_calendar_events(
         client_id=client_id,
         client_secret=client_secret,
     )
-    retrieved_events: list[CalendarEvent] = calendar_client.get_events(
-        request=request
-    )
+    retrieved_events: list[CalendarEvent] = calendar_client.get_events(request=request)
     if not retrieved_events:
         return AgentResponse(
             agent=SUMMARY_AGENT,
@@ -175,9 +176,7 @@ CALENDAR_GET_EVENTS_AGENT = CalendarGetEventsAgent(
     integration_group=Integration.CALENDAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at retrieving events from Google Calendar. Your task is to help a user retrieve events by supplying the correct request to the Google Calendar API.",
-    tools=[
-        openai.pydantic_function_tool(CalendarGetEventsRequest)
-    ],
+    tools=[openai.pydantic_function_tool(CalendarGetEventsRequest)],
 )
 
 
@@ -189,10 +188,10 @@ class CalendarUpdateEventAgent(Agent):
         refresh_token: str,
         client_id: str,
         client_secret: str,
-        enable_verification: bool
+        enable_verification: bool,
     ) -> AgentResponse:
         response, function_name = self.get_response(chat_history=chat_history)
-        
+
         try:
             match function_name:
                 case CalendarUpdateEventRequest.__name__:
@@ -210,20 +209,23 @@ class CalendarUpdateEventAgent(Agent):
                                     ).model_dump()
                                 ],
                             ),
-                            function_to_verify=CalendarUpdateEventRequest.__name__
+                            function_to_verify=CalendarUpdateEventRequest.__name__,
                         )
                     return update_calendar_event(
-                        request=response.choices[0].message.tool_calls[0].function.parsed_arguments,
+                        request=response.choices[0]
+                        .message.tool_calls[0]
+                        .function.parsed_arguments,
                         access_token=access_token,
                         refresh_token=refresh_token,
                         client_id=client_id,
-                        client_secret=client_secret
+                        client_secret=client_secret,
                     )
                 case _:
                     raise InferenceError(f"Function {function_name} not supported")
         except Exception as e:
             log.error(f"Error in CalendarUpdateEventAgent: {e}")
             raise e
+
 
 def update_calendar_event(
     request: CalendarUpdateEventRequest,
@@ -238,9 +240,7 @@ def update_calendar_event(
         client_id=client_id,
         client_secret=client_secret,
     )
-    updated_event: CalendarEvent = calendar_client.update_event(
-        request=request
-    )
+    updated_event: CalendarEvent = calendar_client.update_event(request=request)
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -250,14 +250,13 @@ def update_calendar_event(
         ),
     )
 
+
 CALENDAR_UPDATE_EVENT_AGENT = CalendarUpdateEventAgent(
     name="Update Event Agent",
     integration_group=Integration.CALENDAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at updating events in Google Calendar. Your task is to help a user update an event by supplying the correct request to the Google Calendar API.",
-    tools=[
-        openai.pydantic_function_tool(CalendarUpdateEventRequest)
-    ],
+    tools=[openai.pydantic_function_tool(CalendarUpdateEventRequest)],
 )
 
 
@@ -269,7 +268,7 @@ class CalendarDeleteEventsAgent(Agent):
         refresh_token: str,
         client_id: str,
         client_secret: str,
-        enable_verification: bool
+        enable_verification: bool,
     ) -> AgentResponse:
         response, function_name = self.get_response(chat_history=chat_history)
 
@@ -290,20 +289,23 @@ class CalendarDeleteEventsAgent(Agent):
                                     ).model_dump()
                                 ],
                             ),
-                            function_to_verify=CalendarDeleteEventsRequest.__name__
+                            function_to_verify=CalendarDeleteEventsRequest.__name__,
                         )
                     return delete_calendar_events(
-                        request=response.choices[0].message.tool_calls[0].function.parsed_arguments,
+                        request=response.choices[0]
+                        .message.tool_calls[0]
+                        .function.parsed_arguments,
                         access_token=access_token,
                         refresh_token=refresh_token,
                         client_id=client_id,
-                        client_secret=client_secret
+                        client_secret=client_secret,
                     )
                 case _:
                     raise InferenceError(f"Function {function_name} not supported")
         except Exception as e:
             log.error(f"Error in CalendarDeleteEventsAgent: {e}")
             raise e
+
 
 def delete_calendar_events(
     request: CalendarDeleteEventsRequest,
@@ -318,9 +320,7 @@ def delete_calendar_events(
         client_id=client_id,
         client_secret=client_secret,
     )
-    deleted_events: list[CalendarEvent] = calendar_client.delete_events(
-        request=request
-    )
+    deleted_events: list[CalendarEvent] = calendar_client.delete_events(request=request)
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -330,14 +330,13 @@ def delete_calendar_events(
         ),
     )
 
+
 CALENDAR_DELETE_EVENTS_AGENT = CalendarDeleteEventsAgent(
     name="Delete Events Agent",
     integration_group=Integration.CALENDAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at deleting events from Google Calendar. Your task is to help a user delete events by supplying the correct request to the Google Calendar API.",
-    tools=[
-        openai.pydantic_function_tool(CalendarDeleteEventsRequest)
-    ],
+    tools=[openai.pydantic_function_tool(CalendarDeleteEventsRequest)],
 )
 
 

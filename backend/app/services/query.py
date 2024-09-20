@@ -6,13 +6,21 @@ from app.connectors.native.stores.token import Token
 from app.exceptions.exception import DatabaseError, PipelineError
 from app.models.agents.base.template import Agent, AgentResponse
 from app.models.agents.base.triage import TriageAgent
-from app.models.agents.calendar import create_calendar_event, delete_calendar_events, update_calendar_event
+from app.models.agents.calendar import (
+    create_calendar_event,
+    delete_calendar_events,
+    update_calendar_event,
+)
 from app.models.agents.gmail import delete_emails, mark_as_read, send_email
 from app.models.agents.linear import create_issue, delete_issues, update_issues
 from app.models.agents.main import MAIN_TRIAGE_AGENT
 from app.models.agents.slack import send_message
 from app.models.integrations.base import Integration
-from app.models.integrations.calendar import CalendarCreateEventRequest, CalendarDeleteEventsRequest, CalendarUpdateEventRequest
+from app.models.integrations.calendar import (
+    CalendarCreateEventRequest,
+    CalendarDeleteEventsRequest,
+    CalendarUpdateEventRequest,
+)
 from app.models.integrations.gmail import (
     GmailDeleteEmailsRequest,
     GmailMarkAsReadRequest,
