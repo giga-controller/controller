@@ -154,9 +154,9 @@ class CalendarClient:
             if request.location:
                 event["location"] = request.location
             if request.start_time:
-                event["start"]["dateTime"] = request.start_time.isoformat()
+                event["start"]["dateTime"] = request.start_time
             if request.end_time:
-                event["end"]["dateTime"] = request.end_time.isoformat()
+                event["end"]["dateTime"] = request.end_time
             if request.attendees:
                 event["attendees"] = [
                     {"email": attendee} for attendee in request.attendees

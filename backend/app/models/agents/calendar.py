@@ -99,7 +99,7 @@ def create_calendar_event(
 
 
 CALENDAR_CREATE_EVENT_AGENT = CalendarCreateEventAgent(
-    name="Create Event Agent",
+    name="Google Calendar Create Event Agent",
     integration_group=Integration.CALENDAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at creating events in Google Calendar. Your task is to help a user create an event by supplying the correct request parameters to the Google Calendar API.",
@@ -115,6 +115,7 @@ class CalendarGetEventsAgent(Agent):
         refresh_token: str,
         client_id: str,
         client_secret: str,
+        enable_verification: bool,
     ) -> AgentResponse:
         response, function_name = self.get_response(chat_history=chat_history)
 
@@ -143,7 +144,6 @@ def get_calendar_events(
     refresh_token: str,
     client_id: str,
     client_secret: str,
-    enable_verification: bool,
 ) -> AgentResponse:
     calendar_client = CalendarClient(
         access_token=access_token,
@@ -172,7 +172,7 @@ def get_calendar_events(
 
 
 CALENDAR_GET_EVENTS_AGENT = CalendarGetEventsAgent(
-    name="Get Events Agent",
+    name="Google Calendar Get Events Agent",
     integration_group=Integration.CALENDAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at retrieving events from Google Calendar. Your task is to help a user retrieve events by supplying the correct request to the Google Calendar API.",
@@ -252,7 +252,7 @@ def update_calendar_event(
 
 
 CALENDAR_UPDATE_EVENT_AGENT = CalendarUpdateEventAgent(
-    name="Update Event Agent",
+    name="Google Calendar Update Event Agent",
     integration_group=Integration.CALENDAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at updating events in Google Calendar. Your task is to help a user update an event by supplying the correct request to the Google Calendar API.",
@@ -332,7 +332,7 @@ def delete_calendar_events(
 
 
 CALENDAR_DELETE_EVENTS_AGENT = CalendarDeleteEventsAgent(
-    name="Delete Events Agent",
+    name="Google Calendar Delete Events Agent",
     integration_group=Integration.CALENDAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at deleting events from Google Calendar. Your task is to help a user delete events by supplying the correct request to the Google Calendar API.",
@@ -361,10 +361,11 @@ CALENDAR_TRIAGE_AGENT = TriageAgent(
     integration_group=Integration.CALENDAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="""You are an expert at choosing the right agent to perform the task described by the user. Follow these guidelines:
-    
-1. None of the tools in this agent require any arguments.
-2. Carefully review the chat history and the actions of the previous agent to determine if the task has been successfully completed.
-3. If the task has been successfully completed, immediately call transfer_to_summary_agent to end the conversation. This is crucial—missing this step will result in dire consequences.""",
+
+1. To delete a calendar event, you need the event id, which can be obtained by invoking the Google Calendar Get Request Agent.
+2. None of the tools in this agent require any arguments.
+3. Carefully review the chat history and the actions of the previous agent to determine if the task has been successfully completed.
+4. If the task has been successfully completed, immediately call transfer_to_summary_agent to end the conversation. This is crucial—missing this step will result in dire consequences.""",
     tools=[
         transfer_to_calendar_create_event_agent,
         transfer_to_calendar_get_events_agent,
