@@ -2,7 +2,7 @@ import logging
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 
 from app.connectors.native.stores.user import User
 from app.exceptions.exception import DatabaseError

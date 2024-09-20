@@ -2,7 +2,7 @@ import logging
 
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, ValidationError
+from pydantic import ValidationError
 
 from app.models.query.base import QueryRequest, QueryResponse
 from app.models.query.confirm import ConfirmRequest
@@ -75,16 +75,16 @@ class QueryController:
                 )
             except ValidationError as e:
                 log.error(
-                    "Validation error in query controller for general query endpoint: %s",
+                    "Validation error in query controller for /confirm endpoint: %s",
                     str(e),
                 )
                 raise HTTPException(status_code=422, detail="Validation error") from e
             except Exception as e:
                 log.error(
-                    "Unexpected error in query controller for general query endpoint: %s",
+                    "Unexpected error in query controller for /confirm endpoint: %s",
                     str(e),
                 )
                 raise HTTPException(
                     status_code=500,
-                    detail="An unexpected error occurred in query controller for general query endpoint",
+                    detail="An unexpected error occurred in query controller for /confirm endpoint",
                 ) from e

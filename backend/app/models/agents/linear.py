@@ -214,7 +214,7 @@ class LinearUpdateRequestAgent(Agent):
                         agent=MAIN_TRIAGE_AGENT,
                         message=Message(
                             role=Role.ASSISTANT,
-                            content="Please confirm that you want to update the asssignee of Linear issues containing the following fields (Yes/No)",
+                            content="Please confirm that you want to update the assignee of Linear issues containing the following fields (Yes/No)",
                             data=[
                                 LinearUpdateIssuesAssigneeRequest.model_validate(
                                     response.choices[0]
