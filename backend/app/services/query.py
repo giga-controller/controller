@@ -255,23 +255,41 @@ async def _infer(
     while response.agent:
         prev_agent: Agent = response.agent
         integration_group: Integration = response.agent.integration_group
-        if integration_group == Integration.NONE:
-            response = response.agent.query(
-                chat_history=agent_chat_history,
-                access_token="",
-                refresh_token="",
-                client_id="",
-                client_secret="",
-                enable_verification=False,
+        try:
+            if integration_group == Integration.NONE:
+                response = response.agent.query(
+                    chat_history=agent_chat_history,
+                    access_token="",
+                    refresh_token="",
+                    client_id="",
+                    client_secret="",
+                    enable_verification=False,
+                )
+            else:
+                response = response.agent.query(
+                    chat_history=agent_chat_history,
+                    access_token=tokens[integration_group].access_token,
+                    refresh_token=tokens[integration_group].refresh_token,
+                    client_id=tokens[integration_group].client_id,
+                    client_secret=tokens[integration_group].client_secret,
+                    enable_verification=enable_verification,
+                )
+        # TODO: Better error handling
+        except Exception as e:
+            log.error("Unexpected error during inference: %s", str(e))
+            successful_messages: list[Message] = [msg for msg in chat_history if not msg.error]
+            successful_messages.append(
+                Message(
+                    role=Role.ASSISTANT,
+                    content="Sorry, I encountered an error. Please help me to improve by reporting the error in the feedback channel (top right hand corner) and trying again later.",
+                    instance=instance,
+                    data=None,
+                )
             )
-        else:
-            response = response.agent.query(
-                chat_history=agent_chat_history,
-                access_token=tokens[integration_group].access_token,
-                refresh_token=tokens[integration_group].refresh_token,
-                client_id=tokens[integration_group].client_id,
-                client_secret=tokens[integration_group].client_secret,
-                enable_verification=enable_verification,
+            return QueryResponse(
+                chat_history=successful_messages,
+                instance=instance,
+                function_to_verify=None,
             )
         if isinstance(prev_agent, TriageAgent):
             continue

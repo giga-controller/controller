@@ -40,7 +40,6 @@ def transfer_to_x_triage_agent():
     return X_TRIAGE_AGENT
 
 
-# this is a very delicate prompt carefully engineered by dear aaron. do not tamper unless strictly necessary
 MAIN_TRIAGE_AGENT = TriageAgent(
     name="Main Triage Agent",
     integration_group=Integration.NONE,
