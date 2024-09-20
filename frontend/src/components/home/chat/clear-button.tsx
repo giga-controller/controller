@@ -12,7 +12,7 @@ export default function ClearButton({
 }: ClearButtonProps) {
   return (
     <Button
-      className="text-xs h-6 bg-opacity-20 backdrop-blur transition-none hover:bg-opacity-50 hover:opacity-100"
+      className="text-xs h-6 hover:bg-opacity-50 hover:opacity-100"
       onClick={() => {
         updateChatHistory([]);
         updateInstance(null);

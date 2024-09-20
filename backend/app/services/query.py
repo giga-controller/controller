@@ -2,24 +2,12 @@ import asyncio
 import logging
 from typing import Optional
 
-from pydantic import BaseModel
-
 from app.connectors.native.stores.token import Token
 from app.exceptions.exception import DatabaseError, PipelineError
 from app.models.agents.base.template import Agent, AgentResponse
 from app.models.agents.base.triage import TriageAgent
-from app.models.agents.gmail import (
-    GMAIL_TRIAGE_AGENT,
-    delete_emails,
-    mark_as_read,
-    send_email,
-)
-from app.models.agents.linear import (
-    LINEAR_TRIAGE_AGENT,
-    create_issue,
-    delete_issues,
-    update_issues,
-)
+from app.models.agents.gmail import delete_emails, mark_as_read, send_email
+from app.models.agents.linear import create_issue, delete_issues, update_issues
 from app.models.agents.main import MAIN_TRIAGE_AGENT
 from app.models.agents.slack import send_message
 from app.models.integrations.base import Integration
@@ -31,7 +19,14 @@ from app.models.integrations.gmail import (
 from app.models.integrations.linear import (
     LinearCreateIssueRequest,
     LinearDeleteIssuesRequest,
-    LinearUpdateIssuesRequest,
+    LinearUpdateIssuesAssigneeRequest,
+    LinearUpdateIssuesCycleRequest,
+    LinearUpdateIssuesDescriptionRequest,
+    LinearUpdateIssuesEstimateRequest,
+    LinearUpdateIssuesLabelsRequest,
+    LinearUpdateIssuesProjectRequest,
+    LinearUpdateIssuesStateRequest,
+    LinearUpdateIssuesTitleRequest,
 )
 from app.models.integrations.slack import SlackSendMessageRequest
 from app.models.query.base import Message, QueryResponse, Role
@@ -115,9 +110,60 @@ class QueryService:
                     request=LinearCreateIssueRequest.model_validate(client_argument),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
-            case LinearUpdateIssuesRequest.__name__:
+            case LinearUpdateIssuesStateRequest.__name__:
                 client_response = update_issues(
-                    request=LinearUpdateIssuesRequest.model_validate(client_argument),
+                    request=LinearUpdateIssuesStateRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesAssigneeRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesAssigneeRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesTitleRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesTitleRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesDescriptionRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesDescriptionRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesLabelsRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesLabelsRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesCycleRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesCycleRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesEstimateRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesEstimateRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesProjectRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesProjectRequest.model_validate(
+                        client_argument
+                    ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearDeleteIssuesRequest.__name__:

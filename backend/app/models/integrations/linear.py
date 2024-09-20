@@ -4,7 +4,7 @@ from typing import Optional
 from pydantic import BaseModel, Field, model_validator
 
 
-class Status(StrEnum):
+class State(StrEnum):
     BACKLOG = "Backlog"
     TODO = "Todo"
     IN_PROGRESS = "In Progress"
@@ -12,10 +12,6 @@ class Status(StrEnum):
     DONE = "Done"
     CANCELED = "Canceled"
     DUPLICATE = "Duplicate"
-
-
-class State(BaseModel):
-    name: Status
 
 
 class Label(BaseModel):
@@ -52,7 +48,7 @@ class LinearIssue(BaseModel):
     estimate: Optional[
         int
     ]  # Assume T-Shirt sizes for now, which is represented as an integer in the API
-    state: Optional[Status]
+    state: Optional[State]
     assignee: Optional[str]
     creator: Optional[str]
     labels: Optional[list[str]]
@@ -65,13 +61,27 @@ class LinearIssue(BaseModel):
     url: Optional[str]
 
 
+class LinearCreateIssueRequest(BaseModel):
+    title: Optional[str]
+    description: Optional[str]
+    priority: Optional[int]
+    estimate: Optional[int]
+    state: Optional[State]
+    assignee: Optional[str]
+    creator: Optional[str]
+    labels: Optional[Labels]
+    dueDate: Optional[str]
+    cycle: Optional[int]
+    project: Optional[str]
+
+
 class LinearIssueQuery(BaseModel):
     use_and_clause: bool = Field(
         description="True if ALL conditions must be met for the issue to be selected, False if ANY condition being met is sufficient"
     )
     title: Optional[list[str]]
     number: Optional[list[int]]
-    state: Optional[list[Status]]
+    state: Optional[list[State]]
     assignee: Optional[list[str]]
     creator: Optional[list[str]]
     project: Optional[list[str]]
@@ -123,14 +133,14 @@ class LinearFilterIssuesRequest(BaseModel):
     issue_ids: Optional[list[str]] = Field(
         description="List of issue ids to filter issues with, if any"
     )
-    queries: Optional[list[LinearIssueQuery]] = Field(
-        description="Queries to filter issues with, if any. Each element in the list represents the parameters that make up one query."
+    query: Optional[LinearIssueQuery] = Field(
+        description="Query to filter issues with, if any"
     )
 
     # Note that we dont throw an error if both are provided, because we will just prioritise reading from the issue_ids array
     @model_validator(mode="after")
     def check_at_least_one(self):
-        if not self.issue_ids and not self.queries:
+        if not self.issue_ids and not self.query:
             raise ValueError(
                 "At least one of issue_ids or filter_conditions must be provided"
             )
@@ -146,21 +156,41 @@ class LinearDeleteIssuesRequest(LinearFilterIssuesRequest):
     pass
 
 
-class LinearCreateIssueRequest(BaseModel):
-    title: Optional[str]
-    description: Optional[str]
-    priority: Optional[int]
-    estimate: Optional[int]
-    state: Optional[Status]
-    assignee: Optional[str]
-    creator: Optional[str]
-    labels: Optional[Labels]
-    dueDate: Optional[str]
-    cycle: Optional[int]
-    project: Optional[str]
+class LinearUpdateIssuesStateRequest(LinearFilterIssuesRequest):
+    updated_state: State = Field(description="The new state to update the issues to")
 
 
-# Might need to revisit this because u want to update different issues differently, so make two calls?
-class LinearUpdateIssuesRequest(BaseModel):
-    filter_conditions: LinearFilterIssuesRequest
-    update_conditions: LinearCreateIssueRequest
+class LinearUpdateIssuesAssigneeRequest(LinearFilterIssuesRequest):
+    updated_assignee: str = Field(
+        description="The new assignee to assign the issues to"
+    )
+
+
+class LinearUpdateIssuesTitleRequest(LinearFilterIssuesRequest):
+    updated_title: str = Field(description="The new title to update the issues to")
+
+
+class LinearUpdateIssuesDescriptionRequest(LinearFilterIssuesRequest):
+    updated_description: str = Field(
+        description="The new description to update the issues to"
+    )
+
+
+class LinearUpdateIssuesLabelsRequest(LinearFilterIssuesRequest):
+    updated_labels: list[str] = Field(
+        description="The new set of label names to update the issues to"
+    )
+
+
+class LinearUpdateIssuesCycleRequest(LinearFilterIssuesRequest):
+    updated_cycle: int = Field(description="The new cycle to update the issues to")
+
+
+class LinearUpdateIssuesEstimateRequest(LinearFilterIssuesRequest):
+    updated_estimate: int = Field(
+        description="The new estimate to update the issues to"
+    )
+
+
+class LinearUpdateIssuesProjectRequest(LinearFilterIssuesRequest):
+    updated_project: str = Field(description="The new project to update the issues to")

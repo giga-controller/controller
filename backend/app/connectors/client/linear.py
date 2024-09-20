@@ -8,10 +8,18 @@ from gql.transport.requests import RequestsHTTPTransport
 from app.models.integrations.linear import (
     LinearCreateIssueRequest,
     LinearDeleteIssuesRequest,
+    LinearFilterIssuesRequest,
     LinearGetIssuesRequest,
     LinearIssue,
     LinearIssueQuery,
-    LinearUpdateIssuesRequest,
+    LinearUpdateIssuesAssigneeRequest,
+    LinearUpdateIssuesCycleRequest,
+    LinearUpdateIssuesDescriptionRequest,
+    LinearUpdateIssuesEstimateRequest,
+    LinearUpdateIssuesLabelsRequest,
+    LinearUpdateIssuesProjectRequest,
+    LinearUpdateIssuesStateRequest,
+    LinearUpdateIssuesTitleRequest,
 )
 
 logging.getLogger("gql").setLevel(logging.WARNING)
@@ -187,10 +195,9 @@ class LinearClient:
                 )
             return validated_results
 
-        for issue_query in request.queries:
-            validated_results.extend(
-                self._get_issues_with_boolean_clause(issue_query=issue_query)
-            )
+        validated_results.extend(
+            self._get_issues_with_boolean_clause(issue_query=request.query)
+        )
         return validated_results
 
     def _get_issues_with_boolean_clause(
@@ -283,80 +290,51 @@ class LinearClient:
             validated_results.append(_flatten_linear_response_issue(issue))
         return validated_results
 
-    def update_issues(self, request: LinearUpdateIssuesRequest) -> list[LinearIssue]:
+    def update_issues(self, request: LinearFilterIssuesRequest) -> list[LinearIssue]:
         variables = {}
         validated_results: list[LinearIssue] = []
 
-        # First, get the issues based on filter_conditions
-        filter_conditions = request.filter_conditions
-        issues_to_update = self.get_issues(filter_conditions)
+        issues_to_update = self.get_issues(request=request)
 
-        # Prepare the update mutation
-        MUTATION_NAME: str = "issueUpdate"
-        mutation = gql(
-            f"""
-            mutation UpdateIssue($id: String!, $update: IssueUpdateInput!) {{
-                {MUTATION_NAME}(id: $id, input: $update) {{
-                    success
-                    issue {{
-                        id
-                        number
-                        title
-                        description
-                        priority
-                        estimate
-                        state {{ name }}
-                        assignee {{ name }}
-                        creator {{ name }}
-                        labels {{ nodes {{ name }} }}
-                        createdAt
-                        updatedAt
-                        dueDate
-                        cycle {{ number }}
-                        project {{ name }}
-                        comments {{ nodes {{ body user {{ name }} }} }}
-                        url
-                    }}
-                }}
-            }}
-            """
-        )
+        mutation_name: str = "issueUpdate"
+        mutation = _get_update_mutation(mutation_name=mutation_name)
 
-        # Iterate over each issue and apply the updates
         for issue in issues_to_update:
             variables["id"] = issue.id
             variables["update"] = {}
-
-            update_conditions = request.update_conditions
-
-            if update_conditions.state:
+            if isinstance(request, LinearUpdateIssuesStateRequest):
                 variables["update"]["stateId"] = self.get_state_id_by_name(
-                    update_conditions.state.value
+                    name=request.updated_state.value
                 )
-            if update_conditions.assignee:
+            elif isinstance(request, LinearUpdateIssuesAssigneeRequest):
                 variables["update"]["assigneeId"] = self.get_id_by_name(
-                    update_conditions.assignee, "users"
+                    name=request.updated_assignee, target="users"
                 )
-            if update_conditions.project:
-                variables["update"]["projectId"] = self.get_id_by_name(
-                    update_conditions.project, "projects"
-                )
-            if update_conditions.cycle:
-                variables["update"]["cycleId"] = self.get_id_by_number(
-                    update_conditions.cycle, "cycles"
-                )
-            if update_conditions.labels:
-                label_names = [label.name for label in update_conditions.labels.nodes]
+            elif isinstance(request, LinearUpdateIssuesTitleRequest):
+                variables["update"]["title"] = request.updated_title
+            elif isinstance(request, LinearUpdateIssuesDescriptionRequest):
+                variables["update"]["description"] = request.updated_description
+            elif isinstance(request, LinearUpdateIssuesLabelsRequest):
                 variables["update"]["labelIds"] = [
-                    self.get_label_id_by_name(label) for label in label_names
+                    self.get_label_id_by_name(name=label)
+                    for label in request.updated_labels
                 ]
-            if update_conditions.estimate:
-                variables["update"]["estimate"] = update_conditions.estimate
+            elif isinstance(request, LinearUpdateIssuesCycleRequest):
+                variables["update"]["cycleId"] = self.get_id_by_number(
+                    number=request.updated_cycle, target="cycles"
+                )
+            elif isinstance(request, LinearUpdateIssuesProjectRequest):
+                variables["update"]["projectId"] = self.get_id_by_name(
+                    name=request.updated_project, target="projects"
+                )
+            elif isinstance(request, LinearUpdateIssuesEstimateRequest):
+                variables["update"]["estimate"] = request.updated_estimate
+            else:
+                raise ValueError(f"Unsupported request type: {type(request)}")
 
             result = self.client.execute(mutation, variable_values=variables)
-
             validated_results.append(
-                _flatten_linear_response_issue(result[MUTATION_NAME]["issue"])
+                _flatten_linear_response_issue(result[mutation_name]["issue"])
             )
 
         return validated_results
@@ -458,8 +436,8 @@ class LinearClient:
     def get_label_id_by_name(self, name: str) -> str:
         query = gql(
             """
-            query GetLabelIdByName {
-                issueLabels {
+            query GetLabelIdByName($name: String!) {
+                issueLabels(filter: { name: { eq: $name } }) {
                     nodes {
                         id
                         name
@@ -469,13 +447,12 @@ class LinearClient:
             """
         )
 
-        result = self.client.execute(query)
+        variables = {"name": name}
+        result = self.client.execute(query, variable_values=variables)
         labels = result.get("issueLabels", {}).get("nodes", [])
 
-        # Filter the labels by name in the application code
-        for label in labels:
-            if label["name"] == name:
-                return label["id"]
+        if labels:
+            return labels[0]["id"]
 
         raise ValueError(f"Label with name '{name}' not found.")
 
@@ -500,3 +477,35 @@ def _flatten_linear_response_issue(issue: dict) -> LinearIssue:
         issue["creator"] = issue["creator"]["name"]
 
     return LinearIssue.model_validate(issue)
+
+
+def _get_update_mutation(mutation_name: str) -> str:
+    mutation = gql(
+        f"""
+        mutation UpdateIssueState($id: String!, $update: IssueUpdateInput!) {{
+            {mutation_name}(id: $id, input: $update) {{
+                success
+                issue {{
+                    id
+                    number
+                    title
+                    description
+                    priority
+                    estimate
+                    state {{ name }}
+                    assignee {{ name }}
+                    creator {{ name }}
+                    labels {{ nodes {{ name }} }}
+                    createdAt
+                    updatedAt
+                    dueDate
+                    cycle {{ number }}
+                    project {{ name }}
+                    comments {{ nodes {{ body user {{ name }} }} }}
+                    url
+                }}
+            }}
+        }}
+        """
+    )
+    return mutation
