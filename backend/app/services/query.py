@@ -20,7 +20,13 @@ from app.models.integrations.linear import (
     LinearCreateIssueRequest,
     LinearDeleteIssuesRequest,
     LinearUpdateIssuesAssigneeRequest,
+    LinearUpdateIssuesCycleRequest,
+    LinearUpdateIssuesDescriptionRequest,
+    LinearUpdateIssuesEstimateRequest,
+    LinearUpdateIssuesLabelsRequest,
+    LinearUpdateIssuesProjectRequest,
     LinearUpdateIssuesStateRequest,
+    LinearUpdateIssuesTitleRequest,
 )
 from app.models.integrations.slack import SlackSendMessageRequest
 from app.models.query.base import Message, QueryResponse, Role
@@ -114,6 +120,48 @@ class QueryService:
             case LinearUpdateIssuesAssigneeRequest.__name__:
                 client_response = update_issues(
                     request=LinearUpdateIssuesAssigneeRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesTitleRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesTitleRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesDescriptionRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesDescriptionRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesLabelsRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesLabelsRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesCycleRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesCycleRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesEstimateRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesEstimateRequest.model_validate(
+                        client_argument
+                    ),
+                    access_token=tokens[Integration.LINEAR].access_token,
+                )
+            case LinearUpdateIssuesProjectRequest.__name__:
+                client_response = update_issues(
+                    request=LinearUpdateIssuesProjectRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,

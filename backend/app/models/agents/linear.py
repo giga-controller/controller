@@ -19,7 +19,13 @@ from app.models.integrations.linear import (
     LinearGetIssuesRequest,
     LinearIssue,
     LinearUpdateIssuesAssigneeRequest,
+    LinearUpdateIssuesCycleRequest,
+    LinearUpdateIssuesDescriptionRequest,
+    LinearUpdateIssuesEstimateRequest,
+    LinearUpdateIssuesLabelsRequest,
+    LinearUpdateIssuesProjectRequest,
     LinearUpdateIssuesStateRequest,
+    LinearUpdateIssuesTitleRequest,
 )
 from app.models.query.base import Message, Role
 
@@ -219,6 +225,108 @@ class LinearUpdateRequestAgent(Agent):
                         ),
                         function_to_verify=LinearUpdateIssuesAssigneeRequest.__name__,
                     )
+            case LinearUpdateIssuesTitleRequest.__name__:
+                if enable_verification:
+                    return AgentResponse(
+                        agent=MAIN_TRIAGE_AGENT,
+                        message=Message(
+                            role=Role.ASSISTANT,
+                            content="Please confirm that you want to update the title of Linear issues containing the following fields (Yes/No)",
+                            data=[
+                                LinearUpdateIssuesTitleRequest.model_validate(
+                                    response.choices[0]
+                                    .message.tool_calls[0]
+                                    .function.parsed_arguments
+                                ).model_dump()
+                            ],
+                        ),
+                        function_to_verify=LinearUpdateIssuesTitleRequest.__name__,
+                    )
+            case LinearUpdateIssuesDescriptionRequest.__name__:
+                if enable_verification:
+                    return AgentResponse(
+                        agent=MAIN_TRIAGE_AGENT,
+                        message=Message(
+                            role=Role.ASSISTANT,
+                            content="Please confirm that you want to update the description of Linear issues containing the following fields (Yes/No)",
+                            data=[
+                                LinearUpdateIssuesDescriptionRequest.model_validate(
+                                    response.choices[0]
+                                    .message.tool_calls[0]
+                                    .function.parsed_arguments
+                                ).model_dump()
+                            ],
+                        ),
+                        function_to_verify=LinearUpdateIssuesDescriptionRequest.__name__,
+                    )
+            case LinearUpdateIssuesLabelsRequest.__name__:
+                if enable_verification:
+                    return AgentResponse(
+                        agent=MAIN_TRIAGE_AGENT,
+                        message=Message(
+                            role=Role.ASSISTANT,
+                            content="Please confirm that you want to update the labels of Linear issues containing the following fields (Yes/No)",
+                            data=[
+                                LinearUpdateIssuesLabelsRequest.model_validate(
+                                    response.choices[0]
+                                    .message.tool_calls[0]
+                                    .function.parsed_arguments
+                                ).model_dump()
+                            ],
+                        ),
+                        function_to_verify=LinearUpdateIssuesLabelsRequest.__name__,
+                    )
+            case LinearUpdateIssuesCycleRequest.__name__:
+                if enable_verification:
+                    return AgentResponse(
+                        agent=MAIN_TRIAGE_AGENT,
+                        message=Message(
+                            role=Role.ASSISTANT,
+                            content="Please confirm that you want to update the cycle of Linear issues containing the following fields (Yes/No)",
+                            data=[
+                                LinearUpdateIssuesCycleRequest.model_validate(
+                                    response.choices[0]
+                                    .message.tool_calls[0]
+                                    .function.parsed_arguments
+                                ).model_dump()
+                            ],
+                        ),
+                        function_to_verify=LinearUpdateIssuesCycleRequest.__name__,
+                    )
+            case LinearUpdateIssuesEstimateRequest.__name__:
+                if enable_verification:
+                    return AgentResponse(
+                        agent=MAIN_TRIAGE_AGENT,
+                        message=Message(
+                            role=Role.ASSISTANT,
+                            content="Please confirm that you want to update the estimate of Linear issues containing the following fields (Yes/No)",
+                            data=[
+                                LinearUpdateIssuesEstimateRequest.model_validate(
+                                    response.choices[0]
+                                    .message.tool_calls[0]
+                                    .function.parsed_arguments
+                                ).model_dump()
+                            ],
+                        ),
+                        function_to_verify=LinearUpdateIssuesEstimateRequest.__name__,
+                    )
+            case LinearUpdateIssuesProjectRequest.__name__:
+                if enable_verification:
+                    return AgentResponse(
+                        agent=MAIN_TRIAGE_AGENT,
+                        message=Message(
+                            role=Role.ASSISTANT,
+                            content="Please confirm that you want to update the project of Linear issues containing the following fields (Yes/No)",
+                            data=[
+                                LinearUpdateIssuesProjectRequest.model_validate(
+                                    response.choices[0]
+                                    .message.tool_calls[0]
+                                    .function.parsed_arguments
+                                ).model_dump()
+                            ],
+                        ),
+                        function_to_verify=LinearUpdateIssuesProjectRequest.__name__,
+                    )
             case _:
                 raise InferenceError(f"Function {function_name} not supported")
 
@@ -268,6 +376,12 @@ LINEAR_UPDATE_REQUEST_AGENT = LinearUpdateRequestAgent(
     tools=[
         openai.pydantic_function_tool(LinearUpdateIssuesStateRequest),
         openai.pydantic_function_tool(LinearUpdateIssuesAssigneeRequest),
+        openai.pydantic_function_tool(LinearUpdateIssuesTitleRequest),
+        openai.pydantic_function_tool(LinearUpdateIssuesDescriptionRequest),
+        openai.pydantic_function_tool(LinearUpdateIssuesLabelsRequest),
+        openai.pydantic_function_tool(LinearUpdateIssuesCycleRequest),
+        openai.pydantic_function_tool(LinearUpdateIssuesEstimateRequest),
+        openai.pydantic_function_tool(LinearUpdateIssuesProjectRequest),
     ],
 )
 

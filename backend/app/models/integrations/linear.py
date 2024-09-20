@@ -166,4 +166,31 @@ class LinearUpdateIssuesAssigneeRequest(LinearFilterIssuesRequest):
     )
 
 
-cla
+class LinearUpdateIssuesTitleRequest(LinearFilterIssuesRequest):
+    updated_title: str = Field(description="The new title to update the issues to")
+
+
+class LinearUpdateIssuesDescriptionRequest(LinearFilterIssuesRequest):
+    updated_description: str = Field(
+        description="The new description to update the issues to"
+    )
+
+
+class LinearUpdateIssuesLabelsRequest(LinearFilterIssuesRequest):
+    updated_labels: list[str] = Field(
+        description="The new set of label names to update the issues to"
+    )
+
+
+class LinearUpdateIssuesCycleRequest(LinearFilterIssuesRequest):
+    updated_cycle: int = Field(description="The new cycle to update the issues to")
+
+
+class LinearUpdateIssuesEstimateRequest(LinearFilterIssuesRequest):
+    updated_estimate: int = Field(
+        description="The new estimate to update the issues to"
+    )
+
+
+class LinearUpdateIssuesProjectRequest(LinearFilterIssuesRequest):
+    updated_project: str = Field(description="The new project to update the issues to")
