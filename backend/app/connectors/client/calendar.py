@@ -104,12 +104,26 @@ class CalendarClient:
         except Exception as e:
             raise InferenceError(f"Error getting events via CalendarClient: {str(e)}")
 
-    def delete_events(self, request: CalendarDeleteEventsRequest) -> None:
+    def delete_events(self, request: CalendarDeleteEventsRequest) -> list[CalendarEvent]:
+        deleted_events: list[CalendarEvent] = []
         try:
             for event_id in request.event_id_lst:
-                self.service.events().delete(
-                    calendarId="primary", eventId=event_id
-                ).execute()
+                event = self.service.events().get(calendarId="primary", eventId=event_id).execute()
+                self.service.events().delete(calendarId="primary", eventId=event_id).execute()
+                deleted_events.append(
+                    CalendarEvent(
+                        id=event["id"],
+                        summary=event["summary"],
+                        description=event.get("description", ""),
+                        location=event.get("location", ""),
+                        timezone=event.get("timeZone", Timezone.UTC),
+                        start_time=event["start"].get("dateTime", event["start"].get("date")),
+                        end_time=event["end"].get("dateTime", event["end"].get("date")),
+                        attendees=[attendee["email"] for attendee in event.get("attendees", [])],
+                        html_link=event.get("htmlLink"),
+                    )
+                )
+            return deleted_events
         except Exception as e:
             raise InferenceError(f"Error deleting event via CalendarClient: {str(e)}")
 

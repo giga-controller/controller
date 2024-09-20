@@ -6,11 +6,13 @@ from app.connectors.native.stores.token import Token
 from app.exceptions.exception import DatabaseError, PipelineError
 from app.models.agents.base.template import Agent, AgentResponse
 from app.models.agents.base.triage import TriageAgent
+from app.models.agents.calendar import create_calendar_event, delete_calendar_events, update_calendar_event
 from app.models.agents.gmail import delete_emails, mark_as_read, send_email
 from app.models.agents.linear import create_issue, delete_issues, update_issues
 from app.models.agents.main import MAIN_TRIAGE_AGENT
 from app.models.agents.slack import send_message
 from app.models.integrations.base import Integration
+from app.models.integrations.calendar import CalendarCreateEventRequest, CalendarDeleteEventsRequest, CalendarUpdateEventRequest
 from app.models.integrations.gmail import (
     GmailDeleteEmailsRequest,
     GmailMarkAsReadRequest,
@@ -171,6 +173,30 @@ class QueryService:
                     request=LinearDeleteIssuesRequest.model_validate(client_argument),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
+            case CalendarCreateEventRequest.__name__:
+                client_response = create_calendar_event(
+                    request=CalendarCreateEventRequest.model_validate(client_argument),
+                    access_token=tokens[Integration.CALENDAR].access_token,
+                    refresh_token=tokens[Integration.CALENDAR].refresh_token,
+                    client_id=tokens[Integration.CALENDAR].client_id,
+                    client_secret=tokens[Integration.CALENDAR].client_secret,
+                )
+            case CalendarDeleteEventsRequest.__name__:
+                client_response = delete_calendar_events(
+                    request=CalendarDeleteEventsRequest.model_validate(client_argument),
+                    access_token=tokens[Integration.CALENDAR].access_token,
+                    refresh_token=tokens[Integration.CALENDAR].refresh_token,
+                    client_id=tokens[Integration.CALENDAR].client_id,
+                    client_secret=tokens[Integration.CALENDAR].client_secret,
+                )
+            case CalendarUpdateEventRequest.__name__:
+                client_response = update_calendar_event(
+                    request=CalendarUpdateEventRequest.model_validate(client_argument),
+                    access_token=tokens[Integration.CALENDAR].access_token,
+                    refresh_token=tokens[Integration.CALENDAR].refresh_token,
+                    client_id=tokens[Integration.CALENDAR].client_id,
+                    client_secret=tokens[Integration.CALENDAR].client_secret,
+                )
             case SlackSendMessageRequest.__name__:
                 client_response = send_message(
                     request=SlackSendMessageRequest.model_validate(client_argument),
@@ -324,56 +350,3 @@ def _append_chat_history(
         )
     )
     return chat_history, agent_chat_history
-
-
-# async def query_linear(
-#     self, chat_history: list[Message], api_key: str
-# ) -> list[BaseModel]:
-#     TABLE_NAME = "linear"
-#     token: Optional[Token] = await TokenService().get(
-#         api_key=api_key, table_name=TABLE_NAME
-#     )
-#     if not token:
-#         raise DatabaseError(
-#             f"User has not authenticated with the {TABLE_NAME} table. Please authenticate before trying again."
-#         )
-
-#     curr_agent: Agent = LINEAR_TRIAGE_AGENT.query(
-#         chat_history=chat_history,
-#         access_token=token.access_token,
-#         refresh_token=token.refresh_token,
-#     )
-#     response: list[BaseModel] = curr_agent.query(
-#         chat_history=chat_history,
-#         access_token=token.access_token,
-#         refresh_token=token.refresh_token,
-#     )
-#     return response
-
-# async def query_gmail(
-#     self, chat_history: list[Message], api_key: str
-# ) -> list[BaseModel]:
-#     TABLE_NAME = "gmail"
-#     token: Optional[Token] = await TokenService().get(
-#         api_key=api_key, table_name=TABLE_NAME
-#     )
-#     if not token:
-#         raise DatabaseError(
-#             f"User has not authenticated with the {TABLE_NAME} table. Please authenticate before trying again."
-#         )
-
-#     curr_agent: Agent = GMAIL_TRIAGE_AGENT.query(
-#         messages=chat_history,
-#         access_token=token.access_token,
-#         refresh_token=token.refresh_token,
-#         client_id=token.client_id,
-#         client_secret=token.client_secret,
-#     )
-#     response: list[BaseModel] = curr_agent.query(
-#         chat_history=chat_history,
-#         access_token=token.access_token,
-#         refresh_token=token.refresh_token,
-#         client_id=token.client_id,
-#         client_secret=token.client_secret,
-#     )
-#     return response
