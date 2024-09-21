@@ -64,15 +64,6 @@ export default function RoutingAuthDialogContent({
         />
       );
       break;
-    // case integrationEnum.Values.outlook:
-    //   dialogContent = (
-    //     <MicrosoftOutlookAuthDialogContent
-    //       apiKey={apiKey}
-    //       loginBase="https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
-    //       exchangeBase="https://login.microsoftonline.com/common/oauth2/v2.0/token"
-    //     />
-    //   );
-    //   break;
     case integrationEnum.Values.docs:
       dialogContent = (
         <GoogleDocsAuthDialogContent
@@ -80,7 +71,7 @@ export default function RoutingAuthDialogContent({
           loginBase="https://accounts.google.com/o/oauth2/v2/auth"
           exchangeBase="https://oauth2.googleapis.com/token"
         />
-      )
+      );
       break;
     // case integrationEnum.Values.sheets:
     //   dialogContent = (
@@ -88,6 +79,15 @@ export default function RoutingAuthDialogContent({
     //       apiKey={apiKey}
     //       loginBase="https://accounts.google.com/o/oauth2/v2/auth"
     //       exchangeBase="https://oauth2.googleapis.com/token"
+    //     />
+    //   );
+    //   break;
+    // case integrationEnum.Values.outlook:
+    //   dialogContent = (
+    //     <MicrosoftOutlookAuthDialogContent
+    //       apiKey={apiKey}
+    //       loginBase="https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+    //       exchangeBase="https://login.microsoftonline.com/common/oauth2/v2.0/token"
     //     />
     //   );
     //   break;
