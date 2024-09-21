@@ -14,7 +14,6 @@ export default function XAuthDialogContent({
       loginBase={loginBase}
       exchangeBase={exchangeBase}
       scope="tweet.write offline.access"
-      verifierRequired={false}
     />
   );
 }
