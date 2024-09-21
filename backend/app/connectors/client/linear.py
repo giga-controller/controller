@@ -33,25 +33,22 @@ LINEAR_API_URL = "https://api.linear.app/graphql"
 
 class LinearClient:
     def __init__(self, access_token: str):
-        headers = {
+        self.headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {access_token}",
         }
         transport = RequestsHTTPTransport(
             url=LINEAR_API_URL,
-            headers=headers,
+            headers=self.headers,
             use_json=True,
         )
         self.client = Client(transport=transport, fetch_schema_from_transport=True)
 
     def query_grapql(self, query):
         r = requests.post(
-            self.graphql_url,
+            LINEAR_API_URL,
             json={"query": query},
-            headers={
-                "Authorization": self.api_key
-                # "Authorization" : self.access_token
-            },
+            headers=self.headers
         )
 
         response = json.loads(r.content)
@@ -83,7 +80,7 @@ class LinearClient:
 
     def create_issue(self, request: LinearCreateIssueRequest) -> LinearIssue:
         MUTATION_NAME = "issueCreate"
-
+        
         mutation = gql(
             f"""
             mutation CreateIssue($input: IssueCreateInput!) {{
@@ -134,17 +131,13 @@ class LinearClient:
                     if request.cycle
                     else None
                 ),
-                "labels": request.labels.nodes if request.labels else None,
+                "labels": request.labels if request.labels else None,
                 "projectId": (
                     self.get_id_by_name(name=request.project, target="projects")
                     if request.project
                     else None
                 ),
-                "teamId": (
-                    self.get_id_by_name(name="Linear-whale", target="teams")
-                    if request.assignee
-                    else None
-                ),
+                "teamId": self.teams()[0]["id"], # QUICK FIX WE ONLY GET FROM FIRST TEAM (THIS IS A HACK)
             }
         }
 

@@ -69,7 +69,7 @@ class LinearCreateIssueRequest(BaseModel):
     state: Optional[State]
     assignee: Optional[str]
     creator: Optional[str]
-    labels: Optional[str]
+    labels: Optional[list[str]]
     dueDate: Optional[str]
     cycle: Optional[int]
     project: Optional[str]
