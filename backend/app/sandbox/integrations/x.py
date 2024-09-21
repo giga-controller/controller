@@ -11,6 +11,7 @@ from app.connectors.client.x import XClient
 #     SlackGetChannelIdRequest,
 #     SlackSendMessageRequest,
 # )
+from app.models.integrations.x import XSendTweetRequest
 from app.models.query.base import Message, Role
 
 load_dotenv()
@@ -24,8 +25,7 @@ client = XClient(access_token=X_ACCESS_TOKEN)
 
 def main():
     # HARD CODE TEST
-    # client.create_tweet("happy")
-    client.get_tweets_past_hour()
+    client.send_tweet(request=XSendTweetRequest(text="Hello World"))
 
     ## AGENT TEST
     # chat_history: list[Message] = []
