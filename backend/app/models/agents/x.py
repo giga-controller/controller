@@ -65,9 +65,7 @@ def send_tweet(request: XSendTweetRequest, access_token: str) -> AgentResponse:
         message=Message(
             role=Role.ASSISTANT,
             content="X tweet is sent successfully",
-            data=[
-                client_response.model_dump()
-            ],
+            data=[client_response.model_dump()],
         ),
         function_to_verify=None,
     )

@@ -60,6 +60,8 @@ class QueryController:
         @router.post("/confirm")
         async def confirm(input: ConfirmRequest) -> JSONResponse:
             try:
+                print("INPUT")
+                print(input)
                 response: QueryResponse = await self.service.confirm(
                     chat_history=input.chat_history,
                     api_key=input.api_key,
