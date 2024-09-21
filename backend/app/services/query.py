@@ -215,6 +215,9 @@ class QueryService:
                 )
             case XSendTweetRequest.__name__:
                 print("IN BLOCK")
+                print(client_argument)
+                print(XSendTweetRequest.model_validate(client_argument))
+                print(tokens[Integration.X].access_token)
                 client_response = send_tweet(
                     request=XSendTweetRequest.model_validate(client_argument),
                     access_token=tokens[Integration.X].access_token,
