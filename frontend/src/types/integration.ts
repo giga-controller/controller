@@ -7,6 +7,7 @@ import {
   SiLinear,
   SiMicrosoftoutlook,
   SiGooglesheets,
+  SiGoogledocs
 } from "react-icons/si";
 import { FaXTwitter } from "react-icons/fa6";
 
@@ -43,6 +44,7 @@ export const integrationIconMapping: IntegrationIconMapping = {
   outlook: SiMicrosoftoutlook,
   x: FaXTwitter,
   sheets: SiGooglesheets,
+  docs: SiGoogledocs
 };
 
 export type AuthParamProps = {
