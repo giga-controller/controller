@@ -91,7 +91,7 @@ def send_message(request: SlackSendMessageRequest, access_token: str) -> AgentRe
 
 
 SLACK_POST_REQUEST_AGENT = SlackPostRequestAgent(
-    name="Post Request Agent",
+    name="Slack Post Request Agent",
     integration_group=Integration.SLACK,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at sending information to slack. Your task is to help a user send information by supplying the correct request to the slack API.",
@@ -148,7 +148,7 @@ def get_all_channel_ids(
 
 
 SLACK_GET_REQUEST_AGENT = SlackGetRequestAgent(
-    name="Get Request Agent",
+    name="Slack Get Request Agent",
     integration_group=Integration.SLACK,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at retrieving information from slack. Your task is to help a user retrieve information by supplying the correct request to the slack API.",
@@ -167,7 +167,7 @@ def transfer_to_post_request_agent() -> SlackPostRequestAgent:
 
 
 SLACK_TRIAGE_AGENT = TriageAgent(
-    name="Triage Agent",
+    name="Slack Triage Agent",
     integration_group=Integration.SLACK,
     model=OPENAI_GPT4O_MINI,
     system_prompt="""You are an expert at choosing the right agent to perform the task described by the user. Take note of the following:
