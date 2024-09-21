@@ -41,7 +41,10 @@ export async function GET(request: NextRequest) {
   cookies().set("authState", state, { httpOnly: true, secure: true });
   cookies().set("clientId", clientId, { httpOnly: true, secure: true });
   cookies().set("clientSecret", clientSecret, { httpOnly: true, secure: true });
-  cookies().set("controllerApiKey", controllerApiKey, { httpOnly: true, secure: true });
+  cookies().set("controllerApiKey", controllerApiKey, {
+    httpOnly: true,
+    secure: true,
+  });
   cookies().set("tableName", tableName, { httpOnly: true, secure: true });
   cookies().set("exchangeBase", exchangeBase, { httpOnly: true, secure: true });
   cookies().set("redirect_uri", redirect_uri, { httpOnly: true, secure: true });

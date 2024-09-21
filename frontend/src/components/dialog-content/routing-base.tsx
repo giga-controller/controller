@@ -70,7 +70,7 @@ export default function RoutingAuthDialogContent({
           loginBase="https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
           exchangeBase="https://login.microsoftonline.com/common/oauth2/v2.0/token"
         />
-      )
+      );
     // case integrationEnum.Values.sheets:
     //   dialogContent = (
     //     <GoogleSheetsAuthDialogContent

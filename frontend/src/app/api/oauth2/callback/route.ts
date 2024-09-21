@@ -61,8 +61,8 @@ export async function GET(request: Request) {
     // Base64 encode the client_id:client_secret
     const credentials = btoa(`${storedClientId}:${storedClientSecret}`);
 
-    console.log("STORED EXCHANGE BASE")
-    console.log(storedExchangeBase)
+    console.log("STORED EXCHANGE BASE");
+    console.log(storedExchangeBase);
 
     const response = await axios.post(storedExchangeBase, params, {
       headers: {
