@@ -214,16 +214,12 @@ class QueryService:
                     access_token=tokens[Integration.SLACK].access_token,
                 )
             case XSendTweetRequest.__name__:
-                print("IN BLOCK")
-                print(client_argument)
-                print(XSendTweetRequest.model_validate(client_argument))
-                print(tokens[Integration.X].access_token)
                 client_response = send_tweet(
                     request=XSendTweetRequest.model_validate(client_argument),
                     access_token=tokens[Integration.X].access_token,
                 )
             case _:
-                print("ERROR ARRIVES HERE")
+                log.error("Unsupported function: %s", function_to_verify)
                 raise PipelineError(
                     f"Function {function_to_verify} not supported in the confirmation process"
                 )
