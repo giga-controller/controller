@@ -15,9 +15,9 @@ export const integrationEnum = z.enum([
   "calendar",
   "linear",
   "slack",
+  "outlook",
   "x",
   "sheets",
-  "outlook"
 ]);
 export type Integration = z.infer<typeof integrationEnum>;
 export const integrationsStateSchema = z.object({
