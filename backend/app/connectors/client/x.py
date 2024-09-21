@@ -1,13 +1,13 @@
-from datetime import UTC, datetime, timedelta
-
 import tweepy
+
+from app.models.integrations.x import Tweet
 
 
 class XClient:
     def __init__(self, access_token: str):
         self.client = tweepy.Client(bearer_token=access_token)
 
-    def send_tweet(self, text: str) -> X:
+    def send_tweet(self, text: str) -> Tweet:
         response = self.client.create_tweet(user_auth=False, text=text)
         return response 
 
