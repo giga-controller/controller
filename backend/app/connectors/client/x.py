@@ -1,14 +1,15 @@
 import tweepy
 
-from app.models.integrations.x import Tweet
+from app.models.integrations.x import Tweet, XSendTweetRequest
 
 
 class XClient:
     def __init__(self, access_token: str):
         self.client = tweepy.Client(bearer_token=access_token)
 
-    def send_tweet(self, text: str) -> Tweet:
-        response = self.client.create_tweet(user_auth=False, text=text)
+    def send_tweet(self, request: XSendTweetRequest) -> Tweet:
+        response = self.client.create_tweet(user_auth=False, text=request.text)
+        print(response)
         return response 
 
     # def get_user_tweets(self, user_id: str, max_results: int = 10):
