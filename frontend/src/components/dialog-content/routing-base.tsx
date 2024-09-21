@@ -3,7 +3,8 @@ import GmailAuthDialogContent from "@/components/dialog-content/gmail";
 import GoogleCalendarAuthDialogContent from "@/components/dialog-content/calendar";
 import LinearAuthDialogContent from "@/components/dialog-content/linear";
 import SlackAuthDialogContent from "@/components/dialog-content/slack";
-// import XAuthDialogContent from "@/components/dialog-content/x";
+import MicrosoftOutlookAuthDialogContent from "@/components/dialog-content/outlook";
+import XAuthDialogContent from "@/components/dialog-content/x";
 // import GoogleSheetsAuthDialogContent from "@/components/dialog-content/sheets";
 
 type RoutingAuthDialogContentProps = {
@@ -44,15 +45,15 @@ export default function RoutingAuthDialogContent({
         />
       );
       break;
-    // case integrationEnum.Values.x:
-    //   dialogContent = (
-    //     <XAuthDialogContent
-    //       apiKey={apiKey}
-    //       loginBase="https://twitter.com/i/oauth2/authorize"
-    //       exchangeBase="https://api.x.com/2/oauth2/token"
-    //     />
-    //   );
-    //   break;
+    case integrationEnum.Values.x:
+      dialogContent = (
+        <XAuthDialogContent
+          apiKey={apiKey}
+          loginBase="https://twitter.com/i/oauth2/authorize"
+          exchangeBase="https://api.x.com/2/oauth2/token"
+        />
+      );
+      break;
     case integrationEnum.Values.calendar:
       dialogContent = (
         <GoogleCalendarAuthDialogContent
@@ -62,6 +63,14 @@ export default function RoutingAuthDialogContent({
         />
       );
       break;
+    case integrationEnum.Values.outlook:
+      dialogContent = (
+        <MicrosoftOutlookAuthDialogContent
+          apiKey={apiKey}
+          loginBase="https://login.microsoftonline.com/common/oauth2/v2.0/authorize"
+          exchangeBase="https://login.microsoftonline.com/common/oauth2/v2.0/token"
+        />
+      )
     // case integrationEnum.Values.sheets:
     //   dialogContent = (
     //     <GoogleSheetsAuthDialogContent

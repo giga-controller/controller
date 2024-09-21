@@ -15,6 +15,7 @@ from app.models.agents.gmail import delete_emails, mark_as_read, send_email
 from app.models.agents.linear import create_issue, delete_issues, update_issues
 from app.models.agents.main import MAIN_TRIAGE_AGENT
 from app.models.agents.slack import send_message
+from app.models.agents.x import send_tweet
 from app.models.integrations.base import Integration
 from app.models.integrations.calendar import (
     CalendarCreateEventRequest,
@@ -39,6 +40,7 @@ from app.models.integrations.linear import (
     LinearUpdateIssuesTitleRequest,
 )
 from app.models.integrations.slack import SlackSendMessageRequest
+from app.models.integrations.x import XSendTweetRequest
 from app.models.query.base import Message, QueryResponse, Role
 from app.services.message import MessageService
 from app.services.token import TokenService
@@ -209,6 +211,11 @@ class QueryService:
                 client_response = send_message(
                     request=SlackSendMessageRequest.model_validate(client_argument),
                     access_token=tokens[Integration.SLACK].access_token,
+                )
+            case XSendTweetRequest.__name__:
+                client_response = send_tweet(
+                    request=XSendTweetRequest.model_validate(client_argument),
+                    access_token=tokens[Integration.X].access_token,
                 )
             case _:
                 raise PipelineError(
