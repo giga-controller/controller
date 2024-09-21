@@ -38,19 +38,6 @@ export async function GET(request: Request) {
   try {
     const params = new URLSearchParams();
 
-    // params.append("client_id", storedClientId as string);
-    // params.append("client_secret", storedClientSecret as string);
-    // params.append("code", code);
-    // params.append("redirect_uri", storedRedirectUri as string);
-    // params.append("grant_type", "authorization_code");
-    // params.append("code_verifier", "challenge");
-
-    // const response = await axios.post(storedExchangeBase, params, {
-    //   headers: {
-    //     "Content-Type": "application/x-www-form-urlencoded",
-    //   },
-    // });
-
     params.append("code", code);
     params.append("redirect_uri", storedRedirectUri as string);
     params.append("grant_type", "authorization_code");
@@ -58,7 +45,6 @@ export async function GET(request: Request) {
       params.append("code_verifier", storedCodeVerifier as string);
     }
 
-    // Base64 encode the client_id:client_secret
     const credentials = btoa(`${storedClientId}:${storedClientSecret}`);
 
     console.log("STORED EXCHANGE BASE");

@@ -94,6 +94,7 @@ def transfer_to_post_request_agent() -> XPostRequestAgent:
 
 X_TRIAGE_AGENT = TriageAgent(
     name="X Triage Agent",
+    integration_group=Integration.X,
     model=OPENAI_GPT4O_MINI,
     system_prompt="""You are an expert at choosing the right agent to perform the task described by the user.""",
     tools=[
