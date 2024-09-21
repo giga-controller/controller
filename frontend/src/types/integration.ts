@@ -18,6 +18,7 @@ export const integrationEnum = z.enum([
   "outlook",
   "x",
   "sheets",
+  "docs",
 ]);
 export type Integration = z.infer<typeof integrationEnum>;
 export const integrationsStateSchema = z.object({
