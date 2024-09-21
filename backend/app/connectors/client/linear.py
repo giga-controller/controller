@@ -45,11 +45,7 @@ class LinearClient:
         self.client = Client(transport=transport, fetch_schema_from_transport=True)
 
     def query_grapql(self, query):
-        r = requests.post(
-            LINEAR_API_URL,
-            json={"query": query},
-            headers=self.headers
-        )
+        r = requests.post(LINEAR_API_URL, json={"query": query}, headers=self.headers)
 
         response = json.loads(r.content)
 
@@ -80,7 +76,7 @@ class LinearClient:
 
     def create_issue(self, request: LinearCreateIssueRequest) -> LinearIssue:
         MUTATION_NAME = "issueCreate"
-        
+
         mutation = gql(
             f"""
             mutation CreateIssue($input: IssueCreateInput!) {{
@@ -137,7 +133,9 @@ class LinearClient:
                     if request.project
                     else None
                 ),
-                "teamId": self.teams()[0]["id"], # QUICK FIX WE ONLY GET FROM FIRST TEAM (THIS IS A HACK)
+                "teamId": self.teams()[0][
+                    "id"
+                ],  # QUICK FIX WE ONLY GET FROM FIRST TEAM (THIS IS A HACK)
             }
         }
 

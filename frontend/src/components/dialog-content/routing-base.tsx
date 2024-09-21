@@ -71,7 +71,7 @@ export default function RoutingAuthDialogContent({
           loginBase="https://accounts.google.com/o/oauth2/v2/auth"
           exchangeBase="https://oauth2.googleapis.com/token"
         />
-      )
+      );
       break;
     // case integrationEnum.Values.sheets:
     //   dialogContent = (
