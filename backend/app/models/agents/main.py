@@ -59,6 +59,7 @@ MAIN_TRIAGE_AGENT = TriageAgent(
         transfer_to_linear_triage_agent,
         transfer_to_slack_triage_agent,
         transfer_to_calendar_triage_agent,
+        transfer_to_x_triage_agent,
         transfer_to_summary_agent,
     ],
 )
