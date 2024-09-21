@@ -13,8 +13,7 @@ export default function XAuthDialogContent({
       apiKey={apiKey}
       loginBase={loginBase}
       exchangeBase={exchangeBase}
-      // scope="tweet.write offline.access"
-      scope="tweet.write"
+      scope="tweet.write offline.access"
       verifierRequired={false}
     />
   );
