@@ -88,10 +88,14 @@ class QueryService:
         function_to_verify: str,
         instance: Optional[str],
     ) -> QueryResponse:
+        print("TOKENS")
         tokens: dict[str, Token] = await _construct_tokens_map(
             integrations=integrations, api_key=api_key
         )
+        print(tokens)
         client_argument = chat_history[-1].data[0]
+        print(client_argument)
+        
         match function_to_verify:
             case GmailMarkAsReadRequest.__name__:
                 client_response = mark_as_read(
