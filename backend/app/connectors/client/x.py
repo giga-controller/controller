@@ -8,7 +8,7 @@ class XClient:
         self.client = tweepy.Client(bearer_token=access_token)
 
     def send_tweet(self, request: XSendTweetRequest) -> Tweet:
-        response = self.client.create_tweet(user_auth=False, text=request.text)
+        response = self.client.create_tweet(text=request.text, user_auth=False)
         return Tweet.model_validate(response.data)
 
     # def get_user_tweets(self, user_id: str, max_results: int = 10):
