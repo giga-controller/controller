@@ -38,7 +38,7 @@ class XPostRequestAgent(Agent):
                         agent=MAIN_TRIAGE_AGENT,
                         message=Message(
                             role=Role.ASSISTANT,
-                            content="Please confirm that you want to send a slack message containing the following fields (Yes/No)",
+                            content="Please confirm that you want to send a X tweet containing the following fields (Yes/No)",
                             data=[
                                 XSendTweetRequest.model_validate(
                                     response.choices[0]

@@ -213,6 +213,7 @@ class QueryService:
                     access_token=tokens[Integration.SLACK].access_token,
                 )
             case XSendTweetRequest.__name__:
+                print(client_argument)
                 client_response = send_tweet(
                     request=XSendTweetRequest.model_validate(client_argument),
                     access_token=tokens[Integration.X].access_token,
