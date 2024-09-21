@@ -2,7 +2,7 @@ import { AuthParamProps, integrationEnum } from "@/types/integration";
 import AuthDialogContent from "@/components/dialog-content/auth-base";
 import { capitaliseFirstLetter } from "@/lib/utils";
 
-export default function GoogleSheetsAuthDialogContent({
+export default function MicrosoftOutlookAuthDialogContent({
   apiKey,
   loginBase,
   exchangeBase,
