@@ -9,8 +9,7 @@ class XClient:
 
     def send_tweet(self, request: XSendTweetRequest) -> Tweet:
         response = self.client.create_tweet(user_auth=False, text=request.text)
-        print(response)
-        return response 
+        return Tweet.model_validate(response.data)
 
     # def get_user_tweets(self, user_id: str, max_results: int = 10):
     #     return self.client.get_users_tweets(user_id, max_results=max_results)

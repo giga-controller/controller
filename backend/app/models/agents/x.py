@@ -60,14 +60,13 @@ class XPostRequestAgent(Agent):
 def send_tweet(request: XSendTweetRequest, access_token: str) -> AgentResponse:
     client = XClient(access_token=access_token)
     client_response = client.send_tweet(request=request)
-    print(client_response)
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
             role=Role.ASSISTANT,
             content="X tweet is sent successfully",
             data=[
-                
+                client_response.model_dump()
             ],
         ),
         function_to_verify=None,
