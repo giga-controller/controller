@@ -22,10 +22,11 @@ class SlackClient:
     ) -> list[dict[str, Any]]:
         response = self.client.conversations_list()
         channels = response["channels"]
+        request_channel_names_set: set[str] = {name.lower() for name in request.channel_names}
         channel_info = [
             {"channel_name": channel["name"], "channel_id": channel["id"]}
             for channel in channels
-            if channel["name"] in request.channel_names
+            if channel["name"].lower() in request_channel_names_set # Slack channel names are always lower case
         ]
         return channel_info
 

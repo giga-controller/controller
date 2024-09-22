@@ -73,6 +73,9 @@ class LinearClient:
 
     def projects(self):
         return self.query_basic_resource("projects")
+    
+    def users(self):
+        return self.query_basic_resource("users")
 
     def create_issue(self, request: LinearCreateIssueRequest) -> LinearIssue:
         MUTATION_NAME = "issueCreate"
