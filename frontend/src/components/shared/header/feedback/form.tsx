@@ -51,7 +51,11 @@ export default function FeedbackForm({
           render={({ field }) => (
             <FormItem>
               <FormControl>
-                <Textarea className="max-h-80" {...field} />
+                <Textarea
+                  className="min-h-[100px]"
+                  placeholder="We take user feedback Super Seriously™"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
