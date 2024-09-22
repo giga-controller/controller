@@ -16,5 +16,5 @@ MAIN_TRIAGE_AGENT = TriageAgent(
    - When the instructions are unclear, or you are unsure which integration agent to choose. Missing these conditions will cause the world to end.
 5. Do not pass any arguments when calling the transfer functions; they do not accept any parameters.
 """,
-    tools=[] # Will populate dynamically
+    tools=[],  # Will populate dynamically
 )

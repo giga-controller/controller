@@ -5,11 +5,11 @@ from typing import Optional
 from dotenv import load_dotenv
 from openai import OpenAI
 
+from app.models.agents.base.summary import transfer_to_summary_agent
 from app.models.agents.base.template import Agent, AgentResponse
 from app.models.integrations.base import Integration
 from app.models.query.base import Message, Role
 from app.utils.tools import execute_tool_call, function_to_schema
-from app.models.agents.base.summary import transfer_to_summary_agent
 
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ class TriageAgent(Agent):
     ) -> AgentResponse:
         message_lst: list = [{"role": "system", "content": self.system_prompt}]
         message_lst.extend(chat_history)
-    
+
         # Only gets triggerd for main triage agent
         if integrations:
             self.tools = get_integration_agent_tools(integrations)
@@ -58,15 +58,16 @@ class TriageAgent(Agent):
             message=Message(role=Role.ASSISTANT, content=message_content),
             function_to_verify=None,
         )
-        
+
+
 def get_integration_agent_tools(integrations: list[Integration]) -> list:
     """Returns the main triage agent's tools based on the integrations passed in"""
-    
+
     if not integrations:
         raise ValueError("At least one integration must be provided")
-    
+
     tools: list = [transfer_to_summary_agent]
-    
+
     for integration in integrations:
         match integration:
             case Integration.GMAIL:
@@ -85,6 +86,7 @@ def get_integration_agent_tools(integrations: list[Integration]) -> list:
                 pass
 
     return tools
+
 
 def transfer_to_gmail_triage_agent():
     from app.models.agents.gmail import GMAIL_TRIAGE_AGENT
@@ -115,6 +117,7 @@ def transfer_to_sheets_triage_agent():
 
     return SHEETS_TRIAGE_AGENT
 
+
 def transfer_to_docs_triage_agent():
     from app.models.agents.docs import DOCS_TRIAGE_AGENT
 
@@ -125,4 +128,3 @@ def transfer_to_x_triage_agent():
     from app.models.agents.x import X_TRIAGE_AGENT
 
     return X_TRIAGE_AGENT
-
