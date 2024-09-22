@@ -236,10 +236,10 @@ export default function HomePage() {
               updateChatHistory={updateChatHistory}
               updateInstance={updateInstance}
             />
-            <VerificationCheckbox
+            {/* <VerificationCheckbox
               enableVerification={enableVerification}
               updateEnableVerification={updateEnableVerification}
-            />
+            /> */}
           </div>
           <ChatContainer
             chatHistory={chatHistory}
