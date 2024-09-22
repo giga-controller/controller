@@ -33,6 +33,7 @@ class Agent(BaseModel, ABC):
         client_id: str,
         client_secret: str,
         enable_verification: bool,
+        **kwargs,
     ) -> "AgentResponse":
         pass
 

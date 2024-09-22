@@ -295,7 +295,7 @@ async def _infer(
         prev_agent: Agent = response.agent
         integration_group: Integration = response.agent.integration_group
         try:
-            if integration_group == Integration.NONE:
+            if integration_group == Integration.NONE: # Main triage agent/summary agent
                 response = response.agent.query(
                     chat_history=agent_chat_history,
                     access_token="",
@@ -303,8 +303,9 @@ async def _infer(
                     client_id="",
                     client_secret="",
                     enable_verification=False,
+                    integrations=integrations
                 )
-            else:
+            else: # Integration agent
                 response = response.agent.query(
                     chat_history=agent_chat_history,
                     access_token=tokens[integration_group].access_token,
