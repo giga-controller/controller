@@ -1,49 +1,6 @@
 from app.config import OPENAI_GPT4O_MINI
-from app.models.agents.base.summary import transfer_to_summary_agent
 from app.models.agents.base.triage import TriageAgent
 from app.models.integrations.base import Integration
-
-
-def transfer_to_gmail_triage_agent():
-    from app.models.agents.gmail import GMAIL_TRIAGE_AGENT
-
-    return GMAIL_TRIAGE_AGENT
-
-
-def transfer_to_calendar_triage_agent():
-    from app.models.agents.calendar import CALENDAR_TRIAGE_AGENT
-
-    return CALENDAR_TRIAGE_AGENT
-
-
-def transfer_to_linear_triage_agent():
-    from app.models.agents.linear import LINEAR_TRIAGE_AGENT
-
-    return LINEAR_TRIAGE_AGENT
-
-
-def transfer_to_slack_triage_agent():
-    from app.models.agents.slack import SLACK_TRIAGE_AGENT
-
-    return SLACK_TRIAGE_AGENT
-
-
-def transfer_to_sheets_triage_agent():
-    from app.models.agents.sheets import SHEETS_TRIAGE_AGENT
-
-    return SHEETS_TRIAGE_AGENT
-
-def transfer_to_docs_triage_agent():
-    from app.models.agents.docs import DOCS_TRIAGE_AGENT
-
-    return DOCS_TRIAGE_AGENT
-
-
-def transfer_to_x_triage_agent():
-    from app.models.agents.x import X_TRIAGE_AGENT
-
-    return X_TRIAGE_AGENT
-
 
 MAIN_TRIAGE_AGENT = TriageAgent(
     name="Main Triage Agent",
@@ -59,13 +16,5 @@ MAIN_TRIAGE_AGENT = TriageAgent(
    - When the instructions are unclear, or you are unsure which integration agent to choose. Missing these conditions will cause the world to end.
 5. Do not pass any arguments when calling the transfer functions; they do not accept any parameters.
 """,
-    tools=[
-        transfer_to_gmail_triage_agent,
-        transfer_to_linear_triage_agent,
-        transfer_to_slack_triage_agent,
-        transfer_to_calendar_triage_agent,
-        transfer_to_x_triage_agent,
-        transfer_to_docs_triage_agent,
-        transfer_to_summary_agent,
-    ],
+    tools=[],  # Will populate dynamically
 )
