@@ -92,7 +92,7 @@ class QueryService:
             integrations=integrations, api_key=api_key
         )
         client_argument = chat_history[-1].data[0]
-        
+
         match function_to_verify:
             case GmailMarkAsReadRequest.__name__:
                 client_response = mark_as_read(
@@ -286,7 +286,9 @@ async def _infer(
         # TODO: Better error handling
         except Exception as e:
             log.error("Unexpected error during inference: %s", str(e))
-            successful_messages: list[Message] = [msg for msg in chat_history if not msg.error]
+            successful_messages: list[Message] = [
+                msg for msg in chat_history if not msg.error
+            ]
             successful_messages.append(
                 Message(
                     role=Role.ASSISTANT,

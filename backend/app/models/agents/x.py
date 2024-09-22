@@ -18,8 +18,9 @@ logging.getLogger("httpx").setLevel(logging.WARNING)
 
 log = logging.getLogger(__name__)
 
+
 class XPostRequestAgent(Agent):
-    
+
     def query(
         self,
         chat_history: list[dict],
@@ -77,9 +78,7 @@ X_POST_REQUEST_AGENT = XPostRequestAgent(
     integration_group=Integration.X,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at sending tweets through X. Your task is to help a user send tweets by supplying the correct request to the X API.",
-    tools=[
-        openai.pydantic_function_tool(XSendTweetRequest)
-    ],
+    tools=[openai.pydantic_function_tool(XSendTweetRequest)],
 )
 
 

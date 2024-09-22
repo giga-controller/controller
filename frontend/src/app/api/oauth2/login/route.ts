@@ -74,7 +74,7 @@ export async function GET(request: NextRequest) {
 
   // VERY IMPORTANT: Replace all '+' with '%20' in the authUrl
   const formattedAuthUrl = authUrl.toString().replace(/\+/g, "%20");
-  
+
   console.log("FORMATTED AUTH URL");
   console.log(formattedAuthUrl);
 
