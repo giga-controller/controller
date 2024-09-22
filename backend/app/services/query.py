@@ -128,16 +128,25 @@ class QueryService:
                 client_response = create_document(
                     request=DocsCreateRequest.model_validate(client_argument),
                     access_token=tokens[Integration.DOCS].access_token,
+                    refresh_token=tokens[Integration.DOCS].refresh_token,
+                    client_id=tokens[Integration.DOCS].client_id,
+                    client_secret=tokens[Integration.DOCS].client_secret,
                 )
             case DocsGetRequest.__name__:
                 client_response = get_document(
                     request=DocsGetRequest.model_validate(client_argument),
                     access_token=tokens[Integration.DOCS].access_token,
+                    refresh_token=tokens[Integration.DOCS].refresh_token,
+                    client_id=tokens[Integration.DOCS].client_id,
+                    client_secret=tokens[Integration.DOCS].client_secret,
                 )
             case DocsUpdateRequest.__name__:
                 client_response = update_document(
                     request=DocsUpdateRequest.model_validate(client_argument),
                     access_token=tokens[Integration.DOCS].access_token,
+                    refresh_token=tokens[Integration.DOCS].refresh_token,
+                    client_id=tokens[Integration.DOCS].client_id,
+                    client_secret=tokens[Integration.DOCS].client_secret,
                 )
             case LinearCreateIssueRequest.__name__:
                 client_response = create_issue(
