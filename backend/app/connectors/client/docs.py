@@ -29,7 +29,7 @@ class GoogleDocsClient:
             ),
         )
 
-    def create_document(self, request: GoogleDocCreateRequest) -> GoogleDoc:
+    def create_document(self, request: DocsCreateRequest) -> Docs:
         try:
             document = self.service.documents().create(body={
                 'title': request.title
@@ -53,17 +53,17 @@ class GoogleDocsClient:
                     }
                 ).execute()
 
-            return GoogleDoc(
+            return Docs(
                 id=document['documentId'],
                 title=document['title'],
-                content=request.content or ""
+                content=request.content
             )
         except HttpError as error:
             raise InferenceError(f"Error creating document via GoogleDocsClient: {error}")
 
-    def read_document(self, request: GoogleDocReadRequest) -> GoogleDoc:
+    def get_document(self, request: DocsGetRequest) -> Docs:
         try:
-            document = self.service.documents().get(documentId=request.doc_id).execute()
+            document = self.service.documents().get(documentId=request.id).execute()
             content = document.get('body', {}).get('content', [])
             full_content = ""
             for element in content:
@@ -72,7 +72,7 @@ class GoogleDocsClient:
                         if 'textRun' in par_element:
                             full_content += par_element['textRun']['content']
 
-            return GoogleDoc(
+            return Docs(
                 id=document['documentId'],
                 title=document['title'],
                 content=full_content
@@ -80,10 +80,10 @@ class GoogleDocsClient:
         except HttpError as error:
             raise InferenceError(f"Error reading document via GoogleDocsClient: {error}")
 
-    def update_document(self, request: GoogleDocUpdateRequest) -> GoogleDoc:
+    def update_document(self, request: DocsUpdateRequest) -> Docs:
         try:
             self.service.documents().batchUpdate(
-                documentId=request.doc_id,
+                documentId=request.id,
                 body={
                     'requests': [
                         {
@@ -91,33 +91,37 @@ class GoogleDocsClient:
                                 'location': {
                                     'index': 1,
                                 },
-                                'text': request.content
+                                'text': request.updated_content
                             }
                         }
                     ]
                 }
             ).execute()
 
-            return self.read_document(GoogleDocReadRequest(doc_id=request.doc_id))
+            return self.get_document(DocsGetRequest(doc_id=request.id))
         except HttpError as error:
             raise InferenceError(f"Error updating document via GoogleDocsClient: {error}")
 
-    def delete_document(self, request: GoogleDocDeleteRequest) -> None:
+    def delete_document(self, request: DocsDeleteRequest) -> Docs:
         try:
-            self.service.documents().delete(documentId=request.doc_id).execute()
+            document: Docs = self.get_document(DocsGetRequest(id=request.id))
+            
+            self.service.documents().delete(documentId=request.id).execute()
+            
+            return document
         except HttpError as error:
             raise InferenceError(f"Error deleting document via GoogleDocsClient: {error}")
 
-    def list_documents(self, page_size: int = 10) -> list[GoogleDoc]:
-        try:
-            drive_service = build('drive', 'v3', credentials=self.service._credentials)
-            results = drive_service.files().list(
-                pageSize=page_size,
-                fields="nextPageToken, files(id, name)",
-                q="mimeType='application/vnd.google-apps.document'"
-            ).execute()
-            items = results.get('files', [])
+    # def list_documents(self, page_size: int = 10) -> list[Docs]:
+    #     try:
+    #         drive_service = build('drive', 'v3', credentials=self.service._credentials)
+    #         results = drive_service.files().list(
+    #             pageSize=page_size,
+    #             fields="nextPageToken, files(id, name)",
+    #             q="mimeType='application/vnd.google-apps.document'"
+    #         ).execute()
+    #         items = results.get('files', [])
 
-            return [GoogleDoc(id=item['id'], title=item['name'], content="") for item in items]
-        except HttpError as error:
-            raise InferenceError(f"Error listing documents via GoogleDocsClient: {error}")
+    #         return [GoogleDoc(id=item['id'], title=item['name'], content="") for item in items]
+    #     except HttpError as error:
+    #         raise InferenceError(f"Error listing documents via GoogleDocsClient: {error}")

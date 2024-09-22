@@ -1,16 +1,23 @@
-from pydantic import BaseModel
+from typing import Optional
+from pydantic import BaseModel, Field
 
 class Docs(BaseModel):
-    pass
+    id: str
+    title: str
+    content: Optional[str]
+    
 
 class DocsCreateRequest(BaseModel):
+    content: Optional[str] = Field(description="Content to insert into the document, if any")
+
+class DocsFilterRequest(BaseModel): 
+    id: list[str] = Field(description="Document id to filter documents with")
+    
+class DocsGetRequest(DocsFilterRequest):
     pass
 
-class DocsGetRequest(BaseModel):
-    pass
+class DocsUpdateRequest(DocsFilterRequest):
+    updated_content: str = Field(description="Updated content to replace the document with")
 
-class DocsUpdateRequest(BaseModel):
-    pass
-
-class DocsDeleteRequest(BaseModel):
+class DocsDeleteRequest(DocsFilterRequest):
     pass
