@@ -52,7 +52,7 @@ export default function FeedbackForm({
             <FormItem>
               <FormControl>
                 <Textarea
-                  className="min-h-[100px]"
+                  className="min-h-[10vh]"
                   placeholder="We love our users and take feedback Super Seriously™"
                   {...field}
                 />

@@ -21,7 +21,7 @@ export default function FeedbackButton() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         className="ml-1 mr-1 px-5 py-3 rounded border border-input bg-green-500 hover:bg-accent hover:text-accent-foreground shadow-sm"
-        aria-label="Report an issue"
+        aria-label="Feedback"
       >
         Feedback
       </DialogTrigger>
