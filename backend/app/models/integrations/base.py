@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class Integration(StrEnum):
     GMAIL = "gmail"
     CALENDAR = "calendar"
+    DOCS = "docs"
     LINEAR = "linear"
     SLACK = "slack"
     X = "x"

@@ -33,6 +33,11 @@ def transfer_to_sheets_triage_agent():
 
     return SHEETS_TRIAGE_AGENT
 
+def transfer_to_docs_triage_agent():
+    from app.models.agents.docs import DOCS_TRIAGE_AGENT
+
+    return DOCS_TRIAGE_AGENT
+
 
 def transfer_to_x_triage_agent():
     from app.models.agents.x import X_TRIAGE_AGENT
@@ -60,6 +65,7 @@ MAIN_TRIAGE_AGENT = TriageAgent(
         transfer_to_slack_triage_agent,
         transfer_to_calendar_triage_agent,
         transfer_to_x_triage_agent,
+        transfer_to_docs_triage_agent,
         transfer_to_summary_agent,
     ],
 )
