@@ -20,14 +20,14 @@ export default function FeedbackButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
-        className="ml-1 mr-1 p-1 rounded border border-input bg-background hover:bg-accent hover:text-accent-foreground shadow-sm"
-        aria-label="Report an issue"
+        className="ml-1 mr-1 px-5 py-3 rounded border border-input bg-green-500 hover:bg-accent hover:text-accent-foreground shadow-sm"
+        aria-label="Feedback"
       >
         Feedback
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="flex flex-col items-center justify-center">
-          <DialogTitle>Give us your feedback</DialogTitle>
+          <DialogTitle>How can we improve your experience?</DialogTitle>
         </DialogHeader>
         <FeedbackForm handleSubmitFeedback={handleSubmitFeedback} />
       </DialogContent>
