@@ -11,6 +11,7 @@ from app.models.agents.calendar import (
     delete_calendar_events,
     update_calendar_event,
 )
+from app.models.agents.docs import create_document, get_document, update_document
 from app.models.agents.gmail import delete_emails, mark_as_read, send_email
 from app.models.agents.linear import create_issue, delete_issues, update_issues
 from app.models.agents.main import MAIN_TRIAGE_AGENT
@@ -21,6 +22,11 @@ from app.models.integrations.calendar import (
     CalendarCreateEventRequest,
     CalendarDeleteEventsRequest,
     CalendarUpdateEventRequest,
+)
+from app.models.integrations.docs import (
+    DocsCreateRequest,
+    DocsGetRequest,
+    DocsUpdateRequest,
 )
 from app.models.integrations.gmail import (
     GmailDeleteEmailsRequest,
@@ -117,6 +123,21 @@ class QueryService:
                     refresh_token=tokens[Integration.GMAIL].refresh_token,
                     client_id=tokens[Integration.GMAIL].client_id,
                     client_secret=tokens[Integration.GMAIL].client_secret,
+                )
+            case DocsCreateRequest.__name__:
+                client_response = create_document(
+                    request=DocsCreateRequest.model_validate(client_argument),
+                    access_token=tokens[Integration.DOCS].access_token,
+                )
+            case DocsGetRequest.__name__:
+                client_response = get_document(
+                    request=DocsGetRequest.model_validate(client_argument),
+                    access_token=tokens[Integration.DOCS].access_token,
+                )
+            case DocsUpdateRequest.__name__:
+                client_response = update_document(
+                    request=DocsUpdateRequest.model_validate(client_argument),
+                    access_token=tokens[Integration.DOCS].access_token,
                 )
             case LinearCreateIssueRequest.__name__:
                 client_response = create_issue(

@@ -14,9 +14,9 @@ def main():
     from app.connectors.client.docs import GoogleDocsClient
     from app.models.integrations.docs import (
         DocsCreateRequest,
+        DocsDeleteRequest,
         DocsGetRequest,
         DocsUpdateRequest,
-        DocsDeleteRequest,
     )
 
     client = GoogleDocsClient(
@@ -52,11 +52,10 @@ def main():
     # )
     print(
         client.delete_document(
-            request=DocsDeleteRequest(
-                id="1jCmgYTASurMu1QfMzpINnHTKWOcMA1nCCZmvUYrJl-M"
-            )
+            request=DocsDeleteRequest(id="1jCmgYTASurMu1QfMzpINnHTKWOcMA1nCCZmvUYrJl-M")
         )
     )
+
 
 if __name__ == "__main__":
     main()

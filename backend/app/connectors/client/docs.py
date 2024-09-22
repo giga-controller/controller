@@ -86,8 +86,10 @@ class GoogleDocsClient:
     def update_document(self, request: DocsUpdateRequest) -> Docs:
         try:
             # Get the current document content length
-            current_content_length = len(self.get_document(DocsGetRequest(id=request.id)).content)
-        
+            current_content_length = len(
+                self.get_document(DocsGetRequest(id=request.id)).content
+            )
+
             # Clear the existing content (tentative for now)
             self.service.documents().batchUpdate(
                 documentId=request.id,
@@ -104,7 +106,7 @@ class GoogleDocsClient:
                     ]
                 },
             ).execute()
-            
+
             # Insert the new content
             self.service.documents().batchUpdate(
                 documentId=request.id,
