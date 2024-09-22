@@ -13,7 +13,7 @@ export default function VerificationOption({
 }: VerificationOptionProps) {
   useEffect(() => {
     const handleKeyPress = (event: KeyboardEvent) => {
-      if (!isEnabled) return;
+      if (!isEnabled) { return };
       
       if (event.key === "Enter") {
         sendMessage(userVerificationSchema.Values.YES);

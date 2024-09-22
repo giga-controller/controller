@@ -30,6 +30,7 @@ class SummaryAgent(Agent):
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         enable_verification: bool = False,
+        integrations: list[Integration] = [],
     ) -> AgentResponse:
         # No need for tools in this agent (for now)
         message_lst: list = [{"role": "system", "content": self.system_prompt}]

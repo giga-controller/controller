@@ -4,7 +4,7 @@ import openai
 from openai import OpenAI
 
 from app.config import OPENAI_GPT4O_MINI
-from app.connectors.client.calendar import CalendarClient
+from app.connectors.client.calendar import GoogleCalendarClient
 from app.exceptions.exception import InferenceError
 from app.models.agents.base.summary import SUMMARY_AGENT, transfer_to_summary_agent
 from app.models.agents.base.template import Agent, AgentResponse
@@ -81,7 +81,7 @@ def create_calendar_event(
     client_id: str,
     client_secret: str,
 ) -> AgentResponse:
-    calendar_client = CalendarClient(
+    calendar_client = GoogleCalendarClient(
         access_token=access_token,
         refresh_token=refresh_token,
         client_id=client_id,
@@ -145,7 +145,7 @@ def get_calendar_events(
     client_id: str,
     client_secret: str,
 ) -> AgentResponse:
-    calendar_client = CalendarClient(
+    calendar_client = GoogleCalendarClient(
         access_token=access_token,
         refresh_token=refresh_token,
         client_id=client_id,
@@ -234,7 +234,7 @@ def update_calendar_event(
     client_id: str,
     client_secret: str,
 ) -> AgentResponse:
-    calendar_client = CalendarClient(
+    calendar_client = GoogleCalendarClient(
         access_token=access_token,
         refresh_token=refresh_token,
         client_id=client_id,
@@ -314,7 +314,7 @@ def delete_calendar_events(
     client_id: str,
     client_secret: str,
 ) -> AgentResponse:
-    calendar_client = CalendarClient(
+    calendar_client = GoogleCalendarClient(
         access_token=access_token,
         refresh_token=refresh_token,
         client_id=client_id,
