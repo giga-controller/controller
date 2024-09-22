@@ -14,7 +14,7 @@ from app.models.integrations.calendar import (
 TOKEN_URI = "https://oauth2.googleapis.com/token"
 
 
-class CalendarClient:
+class GoogleCalendarClient:
 
     def __init__(
         self, access_token: str, refresh_token: str, client_id: str, client_secret: str

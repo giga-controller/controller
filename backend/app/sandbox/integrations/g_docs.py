@@ -4,71 +4,59 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-CALENDAR_ACCESS_TOKEN = os.getenv("CALENDAR_ACCESS_TOKEN")
-CALENDAR_REFRESH_TOKEN = os.getenv("CALENDAR_REFRESH_TOKEN")
-CALENDAR_CLIENT_ID = os.getenv("CALENDAR_CLIENT_ID")
-CALENDAR_CLIENT_SECRET = os.getenv("CALENDAR_CLIENT_SECRET")
+DOCS_ACCESS_TOKEN = os.getenv("DOCS_ACCESS_TOKEN")
+DOCS_REFRESH_TOKEN = os.getenv("DOCS_REFRESH_TOKEN")
+DOCS_CLIENT_ID = os.getenv("DOCS_CLIENT_ID")
+DOCS_CLIENT_SECRET = os.getenv("DOCS_CLIENT_SECRET")
 
 
 def main():
-    from app.connectors.client.calendar import GoogleCalendarClient
-    from app.models.integrations.calendar import (
-        CalendarCreateEventRequest,
-        CalendarDeleteEventsRequest,
-        CalendarGetEventsRequest,
-        CalendarUpdateEventRequest,
-        Timezone,
+    from app.connectors.client.docs import GoogleDocsClient
+    from app.models.integrations.docs import (
+        DocsCreateRequest,
+        DocsGetRequest,
+        DocsUpdateRequest,
+        DocsDeleteRequest,
     )
 
-    client = GoogleCalendarClient(
-        access_token=CALENDAR_ACCESS_TOKEN,
-        refresh_token=CALENDAR_REFRESH_TOKEN,
-        client_id=CALENDAR_CLIENT_ID,
-        client_secret=CALENDAR_CLIENT_SECRET,
+    client = GoogleDocsClient(
+        access_token=DOCS_ACCESS_TOKEN,
+        refresh_token=DOCS_REFRESH_TOKEN,
+        client_id=DOCS_CLIENT_ID,
+        client_secret=DOCS_CLIENT_SECRET,
     )
 
     # HARD CODE TEST
+    # print(
+    #     client.create_document(
+    #         request=DocsCreateRequest(
+    #             title="AI aaron",
+    #             content="Test content"
+    #         )
+    #     )
+    # )
+    # print(
+    #     client.get_document(
+    #         request=DocsGetRequest(
+    #             id=""
+    #         )
+    #     )
+    # )
+    # print(
+    #     client.update_document(
+    #         request=DocsUpdateRequest(
+    #             id="",
+    #             updated_content="AI aaorn talks to users"
+    #         )
+    #     )
+    # )
     print(
-        client.get_events(
-            request=CalendarGetEventsRequest(
-                time_min="2024-09-01T09:00:00Z",
-                time_max="2024-09-15T09:00:00Z",
-                max_results=10,
+        client.delete_document(
+            request=DocsDeleteRequest(
+                id="1jCmgYTASurMu1QfMzpINnHTKWOcMA1nCCZmvUYrJl-M"
             )
         )
     )
-
-    client.update_event(
-        request=CalendarUpdateEventRequest(
-            event_id="4hn8ukbpdebk0tsmp4u5a8rocj",
-            summary="Updated Summary",
-            description="Updated Description",
-            location=None,
-            start_time=None,
-            end_time=None,
-            attendees=["chenjinyang4192@gmail.com"],
-        )
-    )
-
-    ## AGENT TEST
-    # chat_history: list[Message] = []
-    # message = Message(
-    #     role=Role.USER,
-    #     content="I want get all emails from hugeewhale@gmail.com that are unread. There should be one in particular that asks for my address. I live at 91 Yishun Ave 1, S(769135) so please send a reply to that email containing the information",
-    # ).model_dump()
-    # chat_history.append(message)
-    # response = AgentResponse(agent=GMAIL_TRIAGE_AGENT, message=message)
-    # while response.agent:
-    #     response = response.agent.query(
-    #         chat_history=chat_history,
-    #         access_token=GMAIL_ACCESS_TOKEN,
-    #         refresh_token=GMAIL_REFRESH_TOKEN,
-    #         client_id=GMAIL_CLIENT_ID,
-    #         client_secret=GMAIL_CLIENT_SECRET,
-    #     )
-    #     chat_history.append(Message(role=Role.ASSISTANT, content=str(response.message)))
-    # print(chat_history)
-
 
 if __name__ == "__main__":
     main()
