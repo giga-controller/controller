@@ -99,7 +99,7 @@ def create_issue(request: LinearCreateIssueRequest, access_token: str) -> AgentR
 
 
 LINEAR_POST_REQUEST_AGENT = LinearPostRequestAgent(
-    name="Post Request Agent",
+    name="Linear Post Request Agent",
     integration_group=Integration.LINEAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="You are an expert at creating issues in Linear via the Linear API. Your task is to help a user create an issue by supplying the correct request parameters to the Linear API.",
@@ -163,7 +163,7 @@ def get_issues(request: LinearGetIssuesRequest, access_token: str) -> AgentRespo
 
 
 LINEAR_GET_REQUEST_AGENT = LinearGetRequestAgent(
-    name="Get Request Agent",
+    name="Linear Get Request Agent",
     integration_group=Integration.LINEAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="""You are an expert at retrieving information from linear. Your task is to help a user retrieve information by supplying the correct request to the linear API. Follow the rules below:
@@ -364,7 +364,7 @@ def update_issues(
 
 
 LINEAR_UPDATE_REQUEST_AGENT = LinearUpdateRequestAgent(
-    name="Update Request Agent",
+    name="Linear Update Request Agent",
     integration_group=Integration.LINEAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="""You are an expert at updating information in linear. Your task is to help a user update information by supplying the correct request to the linear API. Follow the rules below:
@@ -455,7 +455,7 @@ def delete_issues(
 
 
 LINEAR_DELETE_REQUEST_AGENT = LinearDeleteRequestAgent(
-    name="Delete Request Agent",
+    name="Linear Delete Request Agent",
     integration_group=Integration.LINEAR,
     model=OPENAI_GPT4O_MINI,
     system_prompt="""You are an expert at deleting information in linear. Your task is to help a user delete information by supplying the correct request to the linear API. Follow the rules below:
