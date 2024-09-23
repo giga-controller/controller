@@ -2,6 +2,9 @@
 
 Open-source ChatGPT that interacts with all your third party applications!
 
+## Super quick demo
+https://github.com/user-attachments/assets/28894a96-19c3-4216-9f8e-a54c38567eee
+
 ## Getting Started locally
 
 1. Follow the README instructions in the [`frontend`](./frontend/README.md) and [`backend`](./backend/README.md) folders (You have to set up a few environment variables)
@@ -27,3 +30,6 @@ Copy the existing environment template file
 # Create .env file (by copying from .env.example)
 cp .env.example .env
 ```
+
+
+
