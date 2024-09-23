@@ -12,14 +12,14 @@ import {
 import { FaXTwitter } from "react-icons/fa6";
 
 export const integrationEnum = z.enum([
-  "gmail",
   "calendar",
-  "linear",
-  "slack",
-  "outlook",
-  "x",
-  "sheets",
   "docs",
+  "gmail",
+  "linear",
+  "outlook",
+  "sheets",
+  "slack",
+  "x",
 ]);
 export type Integration = z.infer<typeof integrationEnum>;
 export const integrationsStateSchema = z.object({
@@ -37,14 +37,14 @@ const integrationIconMappingSchema = z.record(
 type IntegrationIconMapping = z.infer<typeof integrationIconMappingSchema>;
 
 export const integrationIconMapping: IntegrationIconMapping = {
-  gmail: BiLogoGmail,
   calendar: SiGooglecalendar,
+  docs: SiGoogledocs,
+  gmail: BiLogoGmail,
   linear: SiLinear,
+  sheets: SiGooglesheets,
   slack: SiSlack,
   outlook: SiMicrosoftoutlook,
   x: FaXTwitter,
-  sheets: SiGooglesheets,
-  docs: SiGoogledocs,
 };
 
 export type AuthParamProps = {
