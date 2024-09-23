@@ -6,6 +6,7 @@ import SlackAuthDialogContent from "@/components/dialog-content/slack";
 // import MicrosoftOutlookAuthDialogContent from "@/components/dialog-content/outlook";
 import XAuthDialogContent from "@/components/dialog-content/x";
 import GoogleDocsAuthDialogContent from "@/components/dialog-content/docs";
+import GoogleSheetsAuthDialogContent from "@/components/dialog-content/sheets";
 // import GoogleSheetsAuthDialogContent from "@/components/dialog-content/sheets";
 
 type RoutingAuthDialogContentProps = {
