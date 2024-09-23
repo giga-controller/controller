@@ -1,6 +1,6 @@
 # Controller
 
-Open-source ChatGPT that interacts with all your third party applications!
+<strong>[Controller](https://controller-frontend.vercel.app/)</strong> is the Open-source ChatGPT that interacts with all your third party applications!
 
 ## Super quick demo
 https://github.com/user-attachments/assets/28894a96-19c3-4216-9f8e-a54c38567eee
