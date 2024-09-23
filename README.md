@@ -3,7 +3,7 @@
 Open-source ChatGPT that interacts with all your third party applications!
 
 ## Super quick demo
-https://github.com/user-attachments/assets/3f384bc9-90c9-4101-a9aa-7d473cb45859
+https://github.com/user-attachments/assets/28894a96-19c3-4216-9f8e-a54c38567eee
 
 ## Getting Started locally
 
