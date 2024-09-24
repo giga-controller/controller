@@ -8,6 +8,21 @@ class Timezone(StrEnum):
     UTC = "UTC"
     PST = "America/Los_Angeles"
     EST = "America/New_York"
+    CST = "America/Chicago"
+    MST = "America/Denver"
+    IST = "Asia/Kolkata"
+    GMT = "Europe/London"
+    CET = "Europe/Paris"
+    JST = "Asia/Tokyo"
+    AEST = "Australia/Sydney"
+    AEDT = "Australia/Melbourne"
+    CEST = "Europe/Berlin"
+    EET = "Europe/Athens"
+    MSK = "Europe/Moscow"
+    HKT = "Asia/Hong_Kong"
+    SGT = "Asia/Singapore"
+    NZST = "Pacific/Auckland"
+    NZDT = "Pacific/Auckland"
 
 
 class CalendarEvent(BaseModel):
