@@ -143,6 +143,7 @@ def get_issues(request: LinearGetIssuesRequest, access_token: str) -> AgentRespo
         access_token=access_token,
     )
     retrieved_issues: list[LinearIssue] = linear_client.get_issues(request=request)
+
     if not retrieved_issues:
         return AgentResponse(
             agent=SUMMARY_AGENT,
@@ -160,6 +161,7 @@ def get_issues(request: LinearGetIssuesRequest, access_token: str) -> AgentRespo
             data=[issue.model_dump() for issue in retrieved_issues],
         ),
     )
+    
 
 
 LINEAR_GET_REQUEST_AGENT = LinearGetRequestAgent(
@@ -467,6 +469,31 @@ LINEAR_DELETE_REQUEST_AGENT = LinearDeleteRequestAgent(
     tools=[openai.pydantic_function_tool(LinearDeleteIssuesRequest)],
 )
 
+##############################################
+
+
+class LinearRepairRequestAgent(Agent):
+    def query(
+        self,
+        chat_history: list[dict],
+        access_token: str,
+        refresh_token: Optional[str],
+        client_id: Optional[str],
+        client_secret: Optional[str],
+        enable_verification: bool,
+    ) -> AgentResponse:
+        response, function_name = self.get_response(chat_history=chat_history)
+        
+
+LINEAR_REPAIR_REQUEST_AGENT = LinearRepairRequestAgent(
+    name="Linear Repair Request Agent",
+    integration_group=Integration.LINEAR,
+    model=OPENAI_GPT4O_MINI,
+    system_prompt="""You are an expert at repairing the request parameters passed into a Linear API call. Your task is to help a user repair the request parameters by choosing the most likely candidate given what the user has provided.""",
+    tools=[] # Wil be populated at runtime
+)
+
+    
 ##############################################
 
 
