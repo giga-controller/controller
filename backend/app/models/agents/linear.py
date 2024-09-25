@@ -136,10 +136,10 @@ class LinearGetRequestAgent(Agent):
                         .message.tool_calls[0]
                         .function.parsed_arguments
                     )
-                    if (
-                        request.query and not request.issue_ids
-                    ):  # If issue_ids are provided, we will just use the issue_ids as the filter conditions so we will never need to initiate a query repair
-                        return repair(query=request.query, access_token=access_token)
+                    # if (
+                    #     request.query and not request.issue_ids
+                    # ):  # If issue_ids are provided, we will just use the issue_ids as the filter conditions so we will never need to initiate a query repair
+                    #     return repair(query=request.query, access_token=access_token)
 
             case _:
                 raise InferenceError(f"Function {function_name} not supported")
