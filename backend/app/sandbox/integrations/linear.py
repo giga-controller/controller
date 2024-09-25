@@ -11,8 +11,6 @@ from app.models.integrations.linear import (
     LinearCreateIssueRequest,
     LinearDeleteIssuesRequest,
     LinearGetIssuesRequest,
-    LinearUpdateIssuesRequest,
-    Status,
 )
 from app.models.query.base import Message, Role
 
@@ -44,18 +42,7 @@ def main():
     #     chat_history.append(Message(role=Role.ASSISTANT, content=str(response.message)))
     # print(chat_history)
     print(
-        client.get_issues(
-            request=LinearGetIssuesRequest(
-                id=None,
-                state=None,
-                assignee="Jin Yang Chen",
-                creator=None,
-                project=None,
-                cycle=None,
-                labels=None,
-                estimate=None,
-            )
-        )
+        client.titles()
     )
 
 

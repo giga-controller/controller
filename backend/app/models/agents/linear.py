@@ -13,11 +13,13 @@ from app.models.agents.base.triage import TriageAgent
 from app.models.agents.main import MAIN_TRIAGE_AGENT
 from app.models.integrations.base import Integration
 from app.models.integrations.linear import (
+    Label,
     LinearCreateIssueRequest,
     LinearDeleteIssuesRequest,
     LinearFilterIssuesRequest,
     LinearGetIssuesRequest,
     LinearIssue,
+    LinearIssueQuery,
     LinearUpdateIssuesAssigneeRequest,
     LinearUpdateIssuesCycleRequest,
     LinearUpdateIssuesDescriptionRequest,
@@ -26,6 +28,9 @@ from app.models.integrations.linear import (
     LinearUpdateIssuesProjectRequest,
     LinearUpdateIssuesStateRequest,
     LinearUpdateIssuesTitleRequest,
+    Project,
+    Title,
+    User,
 )
 from app.models.query.base import Message, Role
 
@@ -122,21 +127,42 @@ class LinearGetRequestAgent(Agent):
     ) -> AgentResponse:
         response, function_name = self.get_response(chat_history=chat_history)
 
-        try:
-            match function_name:
-                case LinearGetIssuesRequest.__name__:
-                    return get_issues(
-                        request=response.choices[0]
-                        .message.tool_calls[0]
-                        .function.parsed_arguments,
-                        access_token=access_token,
-                    )
-                case _:
-                    raise InferenceError(f"Function {function_name} not supported")
-        except Exception as e:
-            log.error(f"Error in LinearGetRequestAgent: {e}")
-            raise e
+        match function_name:
+            case LinearGetIssuesRequest.__name__:
+                if enable_verification:
+                    request = LinearGetIssuesRequest.model_validate(response.choices[0].message.tool_calls[0].function.parsed_arguments)
+                    if request.query and not request.issue_ids: # If issue_ids are provided, we will just use the issue_ids as the filter conditions so we will never need to initiate a query repair
+                        return repair(query=request.query, access_token=access_token)
+                    
+            case _:
+                raise InferenceError(f"Function {function_name} not supported")
+            
+        return get_issues(
+            request=request,
+            access_token=access_token,
+        )
 
+def repair(query: LinearIssueQuery, access_token: str) -> dict[str, list]:
+    linear_client = LinearClient(
+        access_token=access_token,
+    )
+    zero_match_parameters: dict[str, list] = linear_client.get_zero_match_parameters(query=query)
+    print(zero_match_parameters)
+    
+    for param, value_lst in zero_match_parameters.items():
+        match param:
+            case "title":
+                possible_titles: list[Title] = [Title.model_validate(title) for title in linear_client.titles()]
+            case "assignee":
+                possible_assignees: list[User] = [User.model_validate(user) for user in linear_client.users()]
+            case "creator":
+                possible_creators: list[User] = [User.model_validate(user) for user in linear_client.users()] 
+            case "project":
+                possible_projects: list[Project] = [Project.model_validate(project) for project in linear_client.projects()]
+            case "labels":
+                possible_labels: list[Label] = [Label.model_validate(label) for label in linear_client.labels()]
+            case _:
+                raise ValueError(f"Unknown parameter: {param}")
 
 def get_issues(request: LinearGetIssuesRequest, access_token: str) -> AgentResponse:
     linear_client = LinearClient(
