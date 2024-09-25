@@ -41,9 +41,7 @@ def main():
     #     )
     #     chat_history.append(Message(role=Role.ASSISTANT, content=str(response.message)))
     # print(chat_history)
-    print(
-        client.titles()
-    )
+    print(client.titles())
 
 
 if __name__ == "__main__":

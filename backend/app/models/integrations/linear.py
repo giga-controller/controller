@@ -38,8 +38,10 @@ class Cycle(BaseModel):
 class Project(BaseModel):
     name: str
 
+
 class Title(BaseModel):
     title: str
+
 
 class LinearIssue(BaseModel):
     id: Optional[str]

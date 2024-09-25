@@ -1,12 +1,12 @@
 import json
 import logging
+from collections import defaultdict
 from typing import Optional
 
-from pydantic import BaseModel
 import requests
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
-from collections import defaultdict
+from pydantic import BaseModel
 
 from app.models.integrations.linear import (
     Label,
@@ -62,7 +62,7 @@ class LinearClient:
         return response
 
     def query_basic_resource(self, resource: str, subfields: str):
-        
+
         resource_response = self.query_grapql(
             f"""
                 query Resource {{
@@ -78,41 +78,22 @@ class LinearClient:
         return resource_response["data"][resource]["nodes"]
 
     def teams(self) -> list[dict]:
-        return self.query_basic_resource(
-            resource="teams",
-            subfields="id,name"
-        )
+        return self.query_basic_resource(resource="teams", subfields="id,name")
 
     def states(self) -> list[dict]:
-        return self.query_basic_resource(
-            resource="workflowStates",
-            subfields="name"
-        )
+        return self.query_basic_resource(resource="workflowStates", subfields="name")
 
     def projects(self) -> list[dict]:
-        return self.query_basic_resource(
-            resource="projects",
-            subfields="name"
-        )
+        return self.query_basic_resource(resource="projects", subfields="name")
 
     def users(self) -> list[dict]:
-        return self.query_basic_resource(
-            resource="users",
-            subfields="name"
-        )
-    
+        return self.query_basic_resource(resource="users", subfields="name")
+
     def labels(self) -> list[dict]:
-        return self.query_basic_resource(
-            resource="issueLabels",
-            subfields="name"
-        )
-    
+        return self.query_basic_resource(resource="issueLabels", subfields="name")
+
     def titles(self) -> list[dict]:
-        return self.query_basic_resource(
-            resource="issues",
-            subfields="title"
-        )
-        
+        return self.query_basic_resource(resource="issues", subfields="title")
 
     def create_issue(self, request: LinearCreateIssueRequest) -> LinearIssue:
         MUTATION_NAME = "issueCreate"
@@ -230,10 +211,12 @@ class LinearClient:
             self._get_issues_with_boolean_clause(issue_query=request.query)
         )
         return validated_results
-    
-    def get_zero_match_parameters(self, query: LinearIssueQuery) -> dict[str, list[BaseModel]]:
+
+    def get_zero_match_parameters(
+        self, query: LinearIssueQuery
+    ) -> dict[str, list[BaseModel]]:
         """Returns a dictionary where the keys are the parameters provided in the query and the values are the paramter values that did not have any matches with any items"""
-        
+
         QUERY_OBJ_GROUP = "issues"
         QUERY_OBJ_LIST = "nodes"
         test_query = gql(
@@ -247,23 +230,26 @@ class LinearClient:
             }}
             """
         )
-        
+
         def is_parameter_valid(filter_clause: dict) -> bool:
             """Returns True if the filter clause matches with at least one item and False otherwise"""
             test_variables = {"filter": {"and": [filter_clause]}}
-            test_result = self.client.execute(test_query, variable_values=test_variables)
-            if test_result[QUERY_OBJ_GROUP][QUERY_OBJ_LIST]: # Parameter is valid if there is at least one item that matches the parameter
+            test_result = self.client.execute(
+                test_query, variable_values=test_variables
+            )
+            if test_result[QUERY_OBJ_GROUP][
+                QUERY_OBJ_LIST
+            ]:  # Parameter is valid if there is at least one item that matches the parameter
                 return True
             return False
-                
-                
+
         zero_match_parameters = defaultdict(list[BaseModel])
         query_dict = query.model_dump()
-        
+
         for param, value_lst in query_dict.items():
-            if not value_lst: # No need to test if the parameter is not provided
+            if not value_lst:  # No need to test if the parameter is not provided
                 continue
-            
+
             for value in value_lst:
                 match param:
                     case "title":
@@ -293,7 +279,7 @@ class LinearClient:
                         zero_match_parameters[param].append(Label(name=value))
                     case _:
                         raise ValueError(f"Unknown parameter: {param}")
-                        
+
         return zero_match_parameters
 
     def _get_issues_with_boolean_clause(
@@ -332,7 +318,7 @@ class LinearClient:
             """
         )
         variables["filter"] = {boolean_clause: []}
-            
+
         if issue_query.title:
             variables["filter"][boolean_clause].extend(
                 [{"title": {"contains": _title}} for _title in issue_query.title]
@@ -365,11 +351,11 @@ class LinearClient:
                     for _label in issue_query.labels
                 ]
             )
-        if issue_query.state: 
+        if issue_query.state:
             variables["filter"][boolean_clause].extend(
                 [{"state": {"name": {"eq": _state}}} for _state in issue_query.state]
             )
-        if issue_query.number: # Query repair not needed
+        if issue_query.number:  # Query repair not needed
             variables["filter"][boolean_clause].extend(
                 [{"number": {"eq": _number}} for _number in issue_query.number]
             )
