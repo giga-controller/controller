@@ -151,7 +151,7 @@ class LinearGetRequestAgent(Agent):
 
 
 def repair(query: LinearIssueQuery, access_token: str) -> dict[str, list]:
-    """Repairs the query parameters by returning"""
+    """Repairs the query parameters by returning the most likely candidate"""
     linear_client = LinearClient(
         access_token=access_token,
     )
