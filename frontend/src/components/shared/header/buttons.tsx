@@ -16,14 +16,14 @@ export default function HeaderButtons() {
       <div className="flex items-center space-x-2">
         <ThemeToggle />
         <FeedbackButton />
-        <SignedIn>
+        {/* <SignedIn> */}
           <UserButton />
-        </SignedIn>
-        <SignedOut>
+        {/* </SignedIn> */}
+        {/* <SignedOut> */}
           <Button asChild>
             <Link href="/sign-in">Sign In</Link>
           </Button>
-        </SignedOut>
+        {/* </SignedOut> */}
       </div>
     </div>
   );
