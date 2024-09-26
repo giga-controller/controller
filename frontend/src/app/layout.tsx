@@ -44,29 +44,29 @@ export default function RootLayout({
             sizes="<generated>"
           />
         </head>
-          <body className={inter.className}>
-            <ThemeProvider
-              attribute="class"
-              defaultTheme="system"
-              enableSystem
-              disableTransitionOnChange
-            >
-              <ClerkLoading>
-                <PageLoader />
-              </ClerkLoading>
-              <ClerkLoaded>
-                <div className={`flex flex-col w-full p-8`}>
-                  <SignedIn>
-                    <HeaderButtons />
-                  </SignedIn>
-                </div>
-                <QueryProvider>
-                  {children}
-                  <Toaster />
-                </QueryProvider>
-              </ClerkLoaded>
-            </ThemeProvider>
-          </body>
+        <body className={inter.className}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ClerkLoading>
+              <PageLoader />
+            </ClerkLoading>
+            <ClerkLoaded>
+              <div className={`flex flex-col w-full p-8`}>
+                <SignedIn>
+                  <HeaderButtons />
+                </SignedIn>
+              </div>
+              <QueryProvider>
+                {children}
+                <Toaster />
+              </QueryProvider>
+            </ClerkLoaded>
+          </ThemeProvider>
+        </body>
       </html>
     </ClerkProvider>
   );
