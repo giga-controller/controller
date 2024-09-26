@@ -64,9 +64,9 @@ export default function RootLayout({
               </ClerkLoading>
               <ClerkLoaded>
                 <div className={`flex flex-col w-full p-8`}>
-                  {/* <SignedIn> */}
+                  <SignedIn>
                     <HeaderButtons />
-                  {/* </SignedIn> */}
+                  </SignedIn>
                 </div>
                 <QueryProvider>
                   {children}

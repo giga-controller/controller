@@ -18,9 +18,9 @@ export default clerkMiddleware((auth, req) => {
     auth().protect();
   }
 
-  // if (!userId && pathname === "/") {
-  //   return NextResponse.redirect(new URL("/sign-in", req.url));
-  // }
+  if (!userId && pathname === "/") {
+    return NextResponse.redirect(new URL("/sign-in", req.url));
+  }
   return NextResponse.next();
 });
 
