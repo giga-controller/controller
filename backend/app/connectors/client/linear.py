@@ -215,7 +215,7 @@ class LinearClient:
     def get_zero_match_parameters(
         self, query: LinearIssueQuery
     ) -> dict[str, list[BaseModel]]:
-        """Returns a dictionary where the keys are the parameters provided in the query and the values are the paramter values that did not have any matches with any items"""
+        """Returns a dictionary where the keys are the parameters provided in the query and the values are the parameter values that did not have any matches with any items"""
 
         QUERY_OBJ_GROUP = "issues"
         QUERY_OBJ_LIST = "nodes"
