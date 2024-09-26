@@ -18,7 +18,7 @@ export default clerkMiddleware((auth, req) => {
   if (!isPublicRoute(req)) {
     auth().protect();
   }
-  if (pathname.startsWith('/sso-callback')) {
+  if (pathname.startsWith("/sso-callback")) {
     return NextResponse.next();
   }
   if (!userId && pathname === "/") {
