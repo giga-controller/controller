@@ -4,7 +4,7 @@
 
 Make sure your terminal is at the root of frontend
 
-Use [Poetry](https://python-poetry.org/) for dependency management.
+### Use [Poetry](https://python-poetry.org/) for dependency management.
 
 ```bash
 # Install Poetry (If using Windows, use WSL)
@@ -30,7 +30,7 @@ poetry update
 poetry shell
 ```
 
-Copy the existing environment template file
+### Copy the existing environment template file
 
 ```bash
 # Create .env file (by copying from .env.example)
@@ -42,7 +42,7 @@ cp .env.example .env
 copy .env.example .env
 ```
 
-Set up [Supabase](https://supabase.com/)
+### Set up [Supabase](https://supabase.com/)
 
 1. Create a project (Note down your project's password)  
   ![Create Project](./images/supabase_create_project.png)
@@ -73,7 +73,7 @@ psql "postgresql://postgres.jcmefqghesrtgvxzsvak:grae!bfSB@aws-0-us-west-7.poole
 e.g. postgresql+asyncpg://postgres.jcmefqghesrtgvxzsvak:grae!bfSB@aws-0-us-west-7.pooler.supabase.com:5432/postgres
 ```
 
-Get your [OpenAI](https://platform.openai.com/api-keys) api key
+### Get your [OpenAI](https://platform.openai.com/api-keys) api key
 
 1. Paste the api key into the OPENAI_API_KEY `.env` variable. It should look like `OPENAI_API_KEY=<COPIED API KEY>` with **no inverted commas** around the api key.
 
