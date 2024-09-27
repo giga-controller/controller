@@ -217,7 +217,7 @@ LINEAR_GET_REQUEST_AGENT = LinearGetRequestAgent(
     model=OPENAI_GPT4O_MINI,
     system_prompt="""You are an expert at retrieving information from linear. Your task is to help a user retrieve information by supplying the correct request to the linear API. Follow the rules below:
 
-1. Prioritise using the id as the filter condition where possible.
+1. Prioritise using the id as the filter condition where possible. If the get request concerns multiple issues, populate all the relevant ids in the "issue_ids" parameter.
 2. Be careful not to mix up the "number" and "id" of the issue. The "id" is an uuid but the "number" is an integer.
 3. Be as restrictive as possible when filtering for the issues to update, which means you should provide as many filter conditions as possible.
 4. Set use_and_clause to True if all filter conditions must be met, and False if meeting any single condition is sufficient.""",
@@ -418,7 +418,7 @@ LINEAR_UPDATE_REQUEST_AGENT = LinearUpdateRequestAgent(
     model=OPENAI_GPT4O_MINI,
     system_prompt="""You are an expert at updating information in linear. Your task is to help a user update information by supplying the correct request to the linear API. Follow the rules below:
 
-1. Prioritise using the id as the filter condition where possible.
+1. Prioritise using the id as the filter condition where possible. If the update request concerns multiple issues, populate all the relevant ids in the "issue_ids" parameter.
 2. Be careful not to mix up the "number" and "id" of the issue. The "id" is an uuid but the "number" is an integer.
 3. Be as restrictive as possible when filtering for the issues to update, which means you should provide as many filter conditions as possible.     
 4. Set use_and_clause to True if all filter conditions must be met, and False if meeting any single condition is sufficient.""",
@@ -509,7 +509,7 @@ LINEAR_DELETE_REQUEST_AGENT = LinearDeleteRequestAgent(
     model=OPENAI_GPT4O_MINI,
     system_prompt="""You are an expert at deleting information in linear. Your task is to help a user delete information by supplying the correct request to the linear API. Follow the rules below:
 
-1. Prioritise using the id as the filter condition where possible.
+1. Prioritise using the id as the filter condition where possible. If the delete request concerns multiple issues, populate all the relevant ids in the "issue_ids" parameter.
 2. Be careful not to mix up the "number" and "id" of the issue. The "id" is an uuid but the "number" is an integer.
 3. Be as restrictive as possible when filtering for the issues to update, which means you should provide as many filter conditions as possible.
 4. Set use_and_clause to True if all filter conditions must be met, and False if meeting any single condition is sufficient.""",
