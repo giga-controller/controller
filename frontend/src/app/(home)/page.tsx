@@ -28,6 +28,7 @@ import {
 } from "@/types/actions/query/confirm";
 import { QueryResponse } from "@/types/actions/query/base";
 import { confirmExecution } from "@/actions/query/confirm";
+import { trimVerificationMessages } from "@/lib/utils";
 
 export default function HomePage() {
   const { user, isLoaded } = useUser();
@@ -94,17 +95,19 @@ export default function HomePage() {
     });
   };
 
-  const trimVerificationMessages = (messages: Message[]): Message[] => {
-    const lastUserMessageIndex = messages
-      .slice()
-      .reverse()
-      .findIndex((msg) => msg.role === roleSchema.Values.user);
-    const trimmedMessages = messages.slice(
-      0,
-      messages.length - lastUserMessageIndex - 1,
-    );
-    return trimmedMessages;
-  };
+  useEffect(() => {
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.key === "r" && event.metaKey && event.shiftKey) {
+        event.preventDefault();
+        updateChatHistory([]);
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
 
   const sendMessage = useMutation({
     mutationFn: async (inputText: string): Promise<Message[]> => {
