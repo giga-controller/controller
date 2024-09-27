@@ -150,42 +150,6 @@ class LinearGetRequestAgent(Agent):
         )
 
 
-def repair(query: LinearIssueQuery, access_token: str) -> dict[str, list]:
-    """Repairs the query parameters by returning the most likely candidate"""
-    linear_client = LinearClient(
-        access_token=access_token,
-    )
-    zero_match_parameters: dict[str, list[BaseModel]] = (
-        linear_client.get_zero_match_parameters(query=query)
-    )
-
-    for param, value_lst in zero_match_parameters.items():
-        match param:
-            case "title":
-                possible_titles: list[Title] = [
-                    Title.model_validate(title) for title in linear_client.titles()
-                ]
-            case "assignee":
-                possible_assignees: list[User] = [
-                    User.model_validate(user) for user in linear_client.users()
-                ]
-            case "creator":
-                possible_creators: list[User] = [
-                    User.model_validate(user) for user in linear_client.users()
-                ]
-            case "project":
-                possible_projects: list[Project] = [
-                    Project.model_validate(project)
-                    for project in linear_client.projects()
-                ]
-            case "labels":
-                possible_labels: list[Label] = [
-                    Label.model_validate(label) for label in linear_client.labels()
-                ]
-            case _:
-                raise ValueError(f"Unknown parameter: {param}")
-
-
 def get_issues(request: LinearGetIssuesRequest, access_token: str) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
@@ -532,6 +496,41 @@ class LinearRepairRequestAgent(Agent):
         response, function_name = self.get_response(chat_history=chat_history)
 
 
+def repair(query: LinearIssueQuery, access_token: str) -> dict[str, list]:
+    """Repairs the query parameters by returning the most likely candidate"""
+    linear_client = LinearClient(
+        access_token=access_token,
+    )
+    zero_match_parameters: dict[str, list[BaseModel]] = (
+        linear_client.get_zero_match_parameters(query=query)
+    )
+
+    for param, value_lst in zero_match_parameters.items():
+        match param:
+            case "title":
+                possible_titles: list[Title] = [
+                    Title.model_validate(title) for title in linear_client.titles()
+                ]
+            case "assignee":
+                possible_assignees: list[User] = [
+                    User.model_validate(user) for user in linear_client.users()
+                ]
+            case "creator":
+                possible_creators: list[User] = [
+                    User.model_validate(user) for user in linear_client.users()
+                ]
+            case "project":
+                possible_projects: list[Project] = [
+                    Project.model_validate(project)
+                    for project in linear_client.projects()
+                ]
+            case "labels":
+                possible_labels: list[Label] = [
+                    Label.model_validate(label) for label in linear_client.labels()
+                ]
+            case _:
+                raise ValueError(f"Unknown parameter: {param}")
+            
 LINEAR_REPAIR_REQUEST_AGENT = LinearRepairRequestAgent(
     name="Linear Repair Request Agent",
     integration_group=Integration.LINEAR,
