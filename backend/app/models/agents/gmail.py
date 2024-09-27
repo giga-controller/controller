@@ -30,7 +30,7 @@ log = logging.getLogger(__name__)
 
 class GmailGetRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -39,7 +39,7 @@ class GmailGetRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool = False,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case GmailGetEmailsRequest.__name__:
@@ -106,7 +106,7 @@ GMAIL_GET_REQUEST_AGENT = GmailGetRequestAgent(
 
 class GmailUpdateRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -115,7 +115,7 @@ class GmailUpdateRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case GmailMarkAsReadRequest.__name__:
@@ -198,7 +198,7 @@ GMAIL_UPDATE_REQUEST_AGENT = GmailUpdateRequestAgent(
 
 class GmailPostRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -207,7 +207,7 @@ class GmailPostRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
         match function_name:
             case GmailSendEmailRequest.__name__:
                 if enable_verification:
@@ -278,7 +278,7 @@ GMAIL_POST_REQUEST_AGENT = GmailPostRequestAgent(
 
 class GmailDeleteRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -287,7 +287,7 @@ class GmailDeleteRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case GmailDeleteEmailsRequest.__name__:

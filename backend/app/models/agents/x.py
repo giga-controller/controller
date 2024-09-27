@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 
 class XPostRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -30,7 +30,7 @@ class XPostRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case XSendTweetRequest.__name__:

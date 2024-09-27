@@ -1,3 +1,5 @@
+import aiohttp
+import asyncio
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
@@ -19,19 +21,22 @@ class GoogleCalendarClient:
     def __init__(
         self, access_token: str, refresh_token: str, client_id: str, client_secret: str
     ):
-        self.service = build(
-            "calendar",
-            "v3",
-            credentials=Credentials(
-                token=access_token,
-                refresh_token=refresh_token,
-                client_id=client_id,
-                client_secret=client_secret,
-                token_uri=TOKEN_URI,
-            ),
+        self.credentials = Credentials(
+            token=access_token,
+            refresh_token=refresh_token,
+            client_id=client_id,
+            client_secret=client_secret,
+            token_uri=TOKEN_URI,
         )
+        self.service = build("calendar", "v3", credentials=self.credentials)
+        self.session = aiohttp.ClientSession()
+        self.base_url = "https://www.googleapis.com/calendar/v3/calendars/primary/events"
+        self.headers = {"Authorization": f"Bearer {access_token}"}
+        
+    async def close(self):
+        await self.session.close()
 
-    def create_event(self, request: CalendarCreateEventRequest) -> CalendarEvent:
+    async def create_event(self, request: CalendarCreateEventRequest) -> CalendarEvent:
         try:
             event = {
                 "summary": request.summary,
@@ -48,9 +53,13 @@ class GoogleCalendarClient:
                 "attendees": [{"email": attendee} for attendee in request.attendees],
             }
 
-            created_event = (
-                self.service.events().insert(calendarId="primary", body=event).execute()
-            )
+            async with self.session.post(
+                self.base_url,
+                json=event,
+                headers=self.headers
+            ) as response:
+                created_event = await response.json()
+                
             return CalendarEvent(
                 id=created_event["id"],
                 summary=request.summary,
@@ -65,19 +74,19 @@ class GoogleCalendarClient:
         except Exception as e:
             raise InferenceError(f"Error creating event via CalendarClient: {str(e)}")
 
-    def get_events(self, request: CalendarGetEventsRequest) -> list[CalendarEvent]:
+    async def get_events(self, request: CalendarGetEventsRequest) -> list[CalendarEvent]:
         try:
-            events_result = (
-                self.service.events()
-                .list(
+            loop = asyncio.get_event_loop()
+            events_result = await loop.run_in_executor(
+                None,
+                lambda: self.service.events().list(
                     calendarId="primary",
                     timeMin=request.time_min,
                     timeMax=request.time_max,
                     maxResults=request.max_results,
                     singleEvents=True,
                     orderBy="startTime",
-                )
-                .execute()
+                ).execute()
             )
             events = events_result.get("items", [])
 
@@ -104,20 +113,24 @@ class GoogleCalendarClient:
         except Exception as e:
             raise InferenceError(f"Error getting events via CalendarClient: {str(e)}")
 
-    def delete_events(
+    async def delete_events(
         self, request: CalendarDeleteEventsRequest
     ) -> list[CalendarEvent]:
         deleted_events: list[CalendarEvent] = []
         try:
             for event_id in request.event_id_lst:
-                event = (
-                    self.service.events()
+                event = await asyncio.get_event_loop().run_in_executor(
+                    None,
+                    lambda: self.service.events()
                     .get(calendarId="primary", eventId=event_id)
                     .execute()
                 )
-                self.service.events().delete(
-                    calendarId="primary", eventId=event_id
-                ).execute()
+                await asyncio.get_event_loop().run_in_executor(
+                    None,
+                    lambda: self.service.events()
+                    .delete(calendarId="primary", eventId=event_id)
+                    .execute()
+                )
                 deleted_events.append(
                     CalendarEvent(
                         id=event["id"],
@@ -139,10 +152,12 @@ class GoogleCalendarClient:
         except Exception as e:
             raise InferenceError(f"Error deleting event via CalendarClient: {str(e)}")
 
-    def update_event(self, request: CalendarUpdateEventRequest) -> CalendarEvent:
+    async def update_event(self, request: CalendarUpdateEventRequest) -> CalendarEvent:
         try:
-            event = (
-                self.service.events()
+            loop = asyncio.get_event_loop()
+            event = await loop.run_in_executor(
+                None,
+                lambda: self.service.events()
                 .get(calendarId="primary", eventId=request.event_id)
                 .execute()
             )
@@ -162,8 +177,9 @@ class GoogleCalendarClient:
                     {"email": attendee} for attendee in request.attendees
                 ]
 
-            updated_event = (
-                self.service.events()
+            updated_event = await loop.run_in_executor(
+                None,
+                lambda: self.service.events()
                 .update(calendarId="primary", eventId=request.event_id, body=event)
                 .execute()
             )

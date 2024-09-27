@@ -44,7 +44,7 @@ openai_client = OpenAI()
 
 class LinearPostRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -53,7 +53,7 @@ class LinearPostRequestAgent(Agent):
         client_secret: Optional[str],
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
@@ -117,7 +117,7 @@ LINEAR_POST_REQUEST_AGENT = LinearPostRequestAgent(
 
 class LinearGetRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -126,7 +126,7 @@ class LinearGetRequestAgent(Agent):
         client_secret: Optional[str],
         enable_verification: bool = False,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case LinearGetIssuesRequest.__name__:
@@ -192,7 +192,8 @@ LINEAR_GET_REQUEST_AGENT = LinearGetRequestAgent(
 
 
 class LinearUpdateRequestAgent(Agent):
-    def query(
+    
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -201,7 +202,7 @@ class LinearUpdateRequestAgent(Agent):
         client_secret: Optional[str],
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case LinearUpdateIssuesStateRequest.__name__:
@@ -402,7 +403,8 @@ LINEAR_UPDATE_REQUEST_AGENT = LinearUpdateRequestAgent(
 
 
 class LinearDeleteRequestAgent(Agent):
-    def query(
+    
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -411,7 +413,7 @@ class LinearDeleteRequestAgent(Agent):
         client_secret: Optional[str],
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case LinearDeleteIssuesRequest.__name__:
@@ -484,7 +486,8 @@ LINEAR_DELETE_REQUEST_AGENT = LinearDeleteRequestAgent(
 
 
 class LinearRepairRequestAgent(Agent):
-    def query(
+    
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -493,7 +496,7 @@ class LinearRepairRequestAgent(Agent):
         client_secret: Optional[str],
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
 
 def repair(query: LinearIssueQuery, access_token: str) -> dict[str, list]:

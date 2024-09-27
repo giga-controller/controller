@@ -215,7 +215,7 @@ class QueryService:
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case CalendarCreateEventRequest.__name__:
-                client_response = create_calendar_event(
+                client_response = await create_calendar_event(
                     request=CalendarCreateEventRequest.model_validate(client_argument),
                     access_token=tokens[Integration.CALENDAR].access_token,
                     refresh_token=tokens[Integration.CALENDAR].refresh_token,
@@ -223,7 +223,7 @@ class QueryService:
                     client_secret=tokens[Integration.CALENDAR].client_secret,
                 )
             case CalendarDeleteEventsRequest.__name__:
-                client_response = delete_calendar_events(
+                client_response = await delete_calendar_events(
                     request=CalendarDeleteEventsRequest.model_validate(client_argument),
                     access_token=tokens[Integration.CALENDAR].access_token,
                     refresh_token=tokens[Integration.CALENDAR].refresh_token,
@@ -231,7 +231,7 @@ class QueryService:
                     client_secret=tokens[Integration.CALENDAR].client_secret,
                 )
             case CalendarUpdateEventRequest.__name__:
-                client_response = update_calendar_event(
+                client_response = await update_calendar_event(
                     request=CalendarUpdateEventRequest.model_validate(client_argument),
                     access_token=tokens[Integration.CALENDAR].access_token,
                     refresh_token=tokens[Integration.CALENDAR].refresh_token,
@@ -296,7 +296,7 @@ async def _infer(
         integration_group: Integration = response.agent.integration_group
         try:
             if integration_group == Integration.NONE:  # Main triage agent/summary agent
-                response = response.agent.query(
+                response = await response.agent.query(
                     chat_history=agent_chat_history,
                     access_token="",
                     refresh_token="",
@@ -306,7 +306,7 @@ async def _infer(
                     integrations=integrations,
                 )
             else:  # Integration agent
-                response = response.agent.query(
+                response = await response.agent.query(
                     chat_history=agent_chat_history,
                     access_token=tokens[integration_group].access_token,
                     refresh_token=tokens[integration_group].refresh_token,

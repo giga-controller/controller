@@ -27,7 +27,7 @@ openai_client = OpenAI()
 
 
 class DocsCreateRequestAgent(Agent):
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -36,7 +36,7 @@ class DocsCreateRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
@@ -107,7 +107,7 @@ DOCS_CREATE_REQUEST_AGENT = DocsCreateRequestAgent(
 
 
 class DocsGetRequestAgent(Agent):
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -116,7 +116,7 @@ class DocsGetRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
@@ -171,7 +171,7 @@ DOCS_GET_REQUEST_AGENT = DocsGetRequestAgent(
 
 
 class DocsUpdateRequestAgent(Agent):
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -180,7 +180,7 @@ class DocsUpdateRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
