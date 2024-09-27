@@ -23,11 +23,3 @@ docker compose up --build
 ## Self-Hosting
 
 We recommend hosting `frontend` on Vercel and `backend` on AWS!
-
-### Useful commands for Development (Not necessary unless you want to contribute)
-
-Copy the existing environment template file
-```bash
-# Create .env file (by copying from .env.example)
-cp .env.example .env
-```
