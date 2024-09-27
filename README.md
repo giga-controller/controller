@@ -9,7 +9,8 @@ https://github.com/user-attachments/assets/28894a96-19c3-4216-9f8e-a54c38567eee
 
 1. Follow the README instructions in the [`frontend`](./frontend/README.md) and [`backend`](./backend/README.md) folders (You have to set up a few environment variables)
 
-2. Build the docker container to start the project
+2. Make sure [Docker Desktop](https://www.docker.com/products/docker-desktop/) is installed and running
+3. Build the docker container to start the project
 
 ```bash
 docker compose up --build
