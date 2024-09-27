@@ -3093,14 +3093,6 @@ ALTER TABLE ONLY public."user"
 
 
 --
--- Name: user user_email_key; Type: CONSTRAINT; Schema: public; Owner: postgres
---
-
-ALTER TABLE ONLY public."user"
-    ADD CONSTRAINT user_email_key UNIQUE (email);
-
-
---
 -- Name: user user_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
@@ -3849,6 +3841,72 @@ ALTER TABLE auth.sso_providers ENABLE ROW LEVEL SECURITY;
 --
 
 ALTER TABLE auth.users ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: calendar; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.calendar ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: docs; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.docs ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: feedback; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.feedback ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: gmail; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.gmail ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: linear; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.linear ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: message; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.message ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: outlook; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.outlook ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: sheets; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.sheets ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: slack; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.slack ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: user; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public."user" ENABLE ROW LEVEL SECURITY;
+
+--
+-- Name: x; Type: ROW SECURITY; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.x ENABLE ROW LEVEL SECURITY;
 
 --
 -- Name: messages; Type: ROW SECURITY; Schema: realtime; Owner: supabase_realtime_admin
