@@ -2,9 +2,9 @@
 
 ## Getting Started
 
-Make sure your terminal is at the root of frontend
+Make sure your terminal is at the root of backend
 
-### Use [Poetry](https://python-poetry.org/) for dependency management.
+### Using [Poetry](https://python-poetry.org/) for dependency management.
 
 ```bash
 # Install Poetry (If using Windows, use WSL)
@@ -76,6 +76,8 @@ e.g. postgresql+asyncpg://postgres.jcmefqghesrtgvxzsvak:grae!bfSB@aws-0-us-west-
 ### Get your [OpenAI](https://platform.openai.com/api-keys) api key
 
 1. Paste the api key into the OPENAI_API_KEY `.env` variable. It should look like `OPENAI_API_KEY=<COPIED API KEY>` with **no inverted commas** around the api key.
+
+2. If you have a custom OpenAI compatible backend, you can change the default ```OPENAI_BASE_URL``` to use it.
 
 ### Useful commands for Development (Not necessary unless you're a Chad and want to contribute)
 
