@@ -1,3 +1,4 @@
+import asyncio
 import os
 
 from dotenv import load_dotenv
@@ -18,35 +19,15 @@ SLACK_ACCESS_TOKEN = os.getenv("SLACK_ACCESS_TOKEN")
 client = SlackClient(access_token=SLACK_ACCESS_TOKEN)
 
 
-def main():
+async def main():
     # HARD CODE TEST
-
+    print(await client.get_all_channel_names())
     ## AGENT TEST
-    chat_history: list[Message] = []
-    message = Message(
-        role=Role.USER,
-        content="I am the new intern and I want to send an introductory message to the channel named startup. You can write the introductory message for me and send it directly",
-    ).model_dump()
-    chat_history.append(message)
-    response = AgentResponse(agent=MAIN_TRIAGE_AGENT, message=message)
-    while response.agent:
-        prev_agent: Agent = response.agent
-        response = response.agent.query(
-            chat_history=chat_history,
-            access_token=SLACK_ACCESS_TOKEN,
-            refresh_token=None,
-            client_id=None,
-            client_secret=None,
-        )
-        if isinstance(prev_agent, TriageAgent):
-            continue
-        chat_history.append(Message(role=Role.ASSISTANT, content=str(response.message)))
-        print("CHAT HISTORY", chat_history)
-    print("Final chat history", chat_history)
+
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
 
 
 ### HARD CODE TEST
