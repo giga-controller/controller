@@ -1,8 +1,8 @@
 import json
 import logging
 from collections import defaultdict
-import httpx
 
+import httpx
 import requests
 from gql import Client, gql
 from gql.transport.requests import RequestsHTTPTransport
@@ -53,7 +53,9 @@ class LinearClient:
 
     async def query_grapql(self, query):
         async with httpx.AsyncClient() as client:
-            r = await client.post(LINEAR_API_URL, json={"query": query}, headers=self.headers)
+            r = await client.post(
+                LINEAR_API_URL, json={"query": query}, headers=self.headers
+            )
 
         response = r.json()
 
@@ -82,7 +84,9 @@ class LinearClient:
         return await self.query_basic_resource(resource="teams", subfields="id,name")
 
     async def states(self) -> list[dict]:
-        return await self.query_basic_resource(resource="workflowStates", subfields="name")
+        return await self.query_basic_resource(
+            resource="workflowStates", subfields="name"
+        )
 
     async def projects(self) -> list[dict]:
         return await self.query_basic_resource(resource="projects", subfields="name")
