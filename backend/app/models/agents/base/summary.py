@@ -53,6 +53,7 @@ SUMMARY_AGENT = SummaryAgent(
 - Main tasks executed by Controller
 - Important results or information obtained
 - Any errors or failures, or suggested next steps if no tasks were executed, such as asking the user to provide more information in the instruction, be clearer about the specific integration to use, or be more explicit in the type of request to initiate(Create, Get, Update or Delete, etc.)
+
 Use simple language and avoid technical jargon. You may use bullet points, dashes or emojis for clarity. Your response will be formatted markdown-style, so make sure to use appropriate markdown syntax for headings, lists, and other formatting to make it more readable.""".strip(),
     tools=[],
 )
