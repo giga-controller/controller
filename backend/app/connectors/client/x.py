@@ -1,17 +1,13 @@
 import asyncio
-
 import tweepy
-
 from app.models.integrations.x import Tweet, XSendTweetRequest
-
+from functools import partial
 
 class XClient:
     def __init__(self, access_token: str):
         self.client = tweepy.Client(bearer_token=access_token)
 
     async def send_tweet(self, request: XSendTweetRequest) -> Tweet:
-        from functools import partial
-
         loop = asyncio.get_event_loop()
         create_tweet_partial = partial(self.client.create_tweet, text=request.text, user_auth=False)
         response = await loop.run_in_executor(None, create_tweet_partial)
