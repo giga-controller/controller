@@ -7,7 +7,7 @@ export default function Navigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex itens-center space-x-2">
+    <nav className="flex items-center space-x-2">
       <Link
         href={ROUTE.home}
         className={`px-3 py-2 rounded-md text-sm font-medium ${pathname === "/" ? "bg-black dark:bg-white text-white dark:text-black" : "text-black-300 hover:bg-gray-700 hover:text-white"}`}
