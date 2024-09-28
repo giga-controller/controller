@@ -24,7 +24,7 @@ log = logging.getLogger(__name__)
 
 class SlackPostRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -33,7 +33,7 @@ class SlackPostRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case SlackSendMessageRequest.__name__:
@@ -53,7 +53,7 @@ class SlackPostRequestAgent(Agent):
                         ),
                         function_to_verify=SlackSendMessageRequest.__name__,
                     )
-                return send_message(
+                return await send_message(
                     request=response.choices[0]
                     .message.tool_calls[0]
                     .function.parsed_arguments,
@@ -61,9 +61,11 @@ class SlackPostRequestAgent(Agent):
                 )
 
 
-def send_message(request: SlackSendMessageRequest, access_token: str) -> AgentResponse:
+async def send_message(
+    request: SlackSendMessageRequest, access_token: str
+) -> AgentResponse:
     client = SlackClient(access_token=access_token)
-    client_response = client.send_message(request=request)
+    client_response = await client.send_message(request=request)
     if not client_response["ok"]:
         return AgentResponse(
             agent=SUMMARY_AGENT,
@@ -102,7 +104,8 @@ SLACK_POST_REQUEST_AGENT = SlackPostRequestAgent(
 
 
 class SlackGetRequestAgent(Agent):
-    def query(
+
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -111,11 +114,11 @@ class SlackGetRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool = False,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case SlackGetChannelIdRequest.__name__:
-                return get_all_channel_ids(
+                return await get_all_channel_ids(
                     request=response.choices[0]
                     .message.tool_calls[0]
                     .function.parsed_arguments,
@@ -123,11 +126,13 @@ class SlackGetRequestAgent(Agent):
                 )
 
 
-def get_all_channel_ids(
+async def get_all_channel_ids(
     request: SlackGetChannelIdRequest, access_token: str
 ) -> AgentResponse:
     client = SlackClient(access_token=access_token)
-    client_response: list[dict[str, Any]] = client.get_all_channel_ids(request=request)
+    client_response: list[dict[str, Any]] = await client.get_all_channel_ids(
+        request=request
+    )
     if not client_response:
         return AgentResponse(
             agent=SUMMARY_AGENT,

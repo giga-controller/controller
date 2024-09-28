@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Optional
 
 from dotenv import load_dotenv
-from openai import OpenAI
+from openai import AsyncOpenAI
 from pydantic import BaseModel
 
 from app.models.integrations.base import Integration
@@ -14,7 +14,7 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
 
-openai_client = OpenAI()
+openai_client = AsyncOpenAI()
 
 
 class Agent(BaseModel, ABC):
@@ -25,7 +25,7 @@ class Agent(BaseModel, ABC):
     tools: list
 
     @abstractmethod
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -37,13 +37,13 @@ class Agent(BaseModel, ABC):
     ) -> "AgentResponse":
         pass
 
-    def get_response(
+    async def get_response(
         self,
         chat_history: list[dict],
     ) -> tuple[Any, Optional[str]]:
         message_lst: list = [{"role": "system", "content": self.system_prompt}]
         message_lst.extend(chat_history)
-        response = openai_client.beta.chat.completions.parse(
+        response = await openai_client.beta.chat.completions.parse(
             model=self.model,
             messages=message_lst,
             tools=self.tools,

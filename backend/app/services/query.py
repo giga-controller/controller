@@ -12,7 +12,7 @@ from app.models.agents.calendar import (
     update_calendar_event,
 )
 from app.models.agents.docs import create_document, get_document, update_document
-from app.models.agents.gmail import delete_emails, mark_as_read, send_email
+from app.models.agents.gmail import mark_as_read, send_email
 from app.models.agents.linear import create_issue, delete_issues, update_issues
 from app.models.agents.main import MAIN_TRIAGE_AGENT
 from app.models.agents.slack import send_message
@@ -28,11 +28,7 @@ from app.models.integrations.docs import (
     DocsGetRequest,
     DocsUpdateRequest,
 )
-from app.models.integrations.gmail import (
-    GmailDeleteEmailsRequest,
-    GmailMarkAsReadRequest,
-    GmailSendEmailRequest,
-)
+from app.models.integrations.gmail import GmailMarkAsReadRequest, GmailSendEmailRequest
 from app.models.integrations.linear import (
     LinearCreateIssueRequest,
     LinearDeleteIssuesRequest,
@@ -101,7 +97,7 @@ class QueryService:
 
         match function_to_verify:
             case GmailMarkAsReadRequest.__name__:
-                client_response = mark_as_read(
+                client_response = await mark_as_read(
                     request=GmailMarkAsReadRequest.model_validate(client_argument),
                     access_token=tokens[Integration.GMAIL].access_token,
                     refresh_token=tokens[Integration.GMAIL].refresh_token,
@@ -109,23 +105,23 @@ class QueryService:
                     client_secret=tokens[Integration.GMAIL].client_secret,
                 )
             case GmailSendEmailRequest.__name__:
-                client_response = send_email(
+                client_response = await send_email(
                     request=GmailSendEmailRequest.model_validate(client_argument),
                     access_token=tokens[Integration.GMAIL].access_token,
                     refresh_token=tokens[Integration.GMAIL].refresh_token,
                     client_id=tokens[Integration.GMAIL].client_id,
                     client_secret=tokens[Integration.GMAIL].client_secret,
                 )
-            case GmailDeleteEmailsRequest.__name__:
-                client_response = delete_emails(
-                    request=GmailDeleteEmailsRequest.model_validate(client_argument),
-                    access_token=tokens[Integration.GMAIL].access_token,
-                    refresh_token=tokens[Integration.GMAIL].refresh_token,
-                    client_id=tokens[Integration.GMAIL].client_id,
-                    client_secret=tokens[Integration.GMAIL].client_secret,
-                )
+            # case GmailDeleteEmailsRequest.__name__:
+            #     client_response = await delete_emails(
+            #         request=GmailDeleteEmailsRequest.model_validate(client_argument),
+            #         access_token=tokens[Integration.GMAIL].access_token,
+            #         refresh_token=tokens[Integration.GMAIL].refresh_token,
+            #         client_id=tokens[Integration.GMAIL].client_id,
+            #         client_secret=tokens[Integration.GMAIL].client_secret,
+            #     )
             case DocsCreateRequest.__name__:
-                client_response = create_document(
+                client_response = await create_document(
                     request=DocsCreateRequest.model_validate(client_argument),
                     access_token=tokens[Integration.DOCS].access_token,
                     refresh_token=tokens[Integration.DOCS].refresh_token,
@@ -133,7 +129,7 @@ class QueryService:
                     client_secret=tokens[Integration.DOCS].client_secret,
                 )
             case DocsGetRequest.__name__:
-                client_response = get_document(
+                client_response = await get_document(
                     request=DocsGetRequest.model_validate(client_argument),
                     access_token=tokens[Integration.DOCS].access_token,
                     refresh_token=tokens[Integration.DOCS].refresh_token,
@@ -141,7 +137,7 @@ class QueryService:
                     client_secret=tokens[Integration.DOCS].client_secret,
                 )
             case DocsUpdateRequest.__name__:
-                client_response = update_document(
+                client_response = await update_document(
                     request=DocsUpdateRequest.model_validate(client_argument),
                     access_token=tokens[Integration.DOCS].access_token,
                     refresh_token=tokens[Integration.DOCS].refresh_token,
@@ -149,73 +145,73 @@ class QueryService:
                     client_secret=tokens[Integration.DOCS].client_secret,
                 )
             case LinearCreateIssueRequest.__name__:
-                client_response = create_issue(
+                client_response = await create_issue(
                     request=LinearCreateIssueRequest.model_validate(client_argument),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesStateRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesStateRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesAssigneeRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesAssigneeRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesTitleRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesTitleRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesDescriptionRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesDescriptionRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesLabelsRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesLabelsRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesCycleRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesCycleRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesEstimateRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesEstimateRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesProjectRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesProjectRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearDeleteIssuesRequest.__name__:
-                client_response = delete_issues(
+                client_response = await delete_issues(
                     request=LinearDeleteIssuesRequest.model_validate(client_argument),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case CalendarCreateEventRequest.__name__:
-                client_response = create_calendar_event(
+                client_response = await create_calendar_event(
                     request=CalendarCreateEventRequest.model_validate(client_argument),
                     access_token=tokens[Integration.CALENDAR].access_token,
                     refresh_token=tokens[Integration.CALENDAR].refresh_token,
@@ -223,7 +219,7 @@ class QueryService:
                     client_secret=tokens[Integration.CALENDAR].client_secret,
                 )
             case CalendarDeleteEventsRequest.__name__:
-                client_response = delete_calendar_events(
+                client_response = await delete_calendar_events(
                     request=CalendarDeleteEventsRequest.model_validate(client_argument),
                     access_token=tokens[Integration.CALENDAR].access_token,
                     refresh_token=tokens[Integration.CALENDAR].refresh_token,
@@ -231,7 +227,7 @@ class QueryService:
                     client_secret=tokens[Integration.CALENDAR].client_secret,
                 )
             case CalendarUpdateEventRequest.__name__:
-                client_response = update_calendar_event(
+                client_response = await update_calendar_event(
                     request=CalendarUpdateEventRequest.model_validate(client_argument),
                     access_token=tokens[Integration.CALENDAR].access_token,
                     refresh_token=tokens[Integration.CALENDAR].refresh_token,
@@ -239,12 +235,12 @@ class QueryService:
                     client_secret=tokens[Integration.CALENDAR].client_secret,
                 )
             case SlackSendMessageRequest.__name__:
-                client_response = send_message(
+                client_response = await send_message(
                     request=SlackSendMessageRequest.model_validate(client_argument),
                     access_token=tokens[Integration.SLACK].access_token,
                 )
             case XSendTweetRequest.__name__:
-                client_response = send_tweet(
+                client_response = await send_tweet(
                     request=XSendTweetRequest.model_validate(client_argument),
                     access_token=tokens[Integration.X].access_token,
                 )
@@ -296,7 +292,7 @@ async def _infer(
         integration_group: Integration = response.agent.integration_group
         try:
             if integration_group == Integration.NONE:  # Main triage agent/summary agent
-                response = response.agent.query(
+                response = await response.agent.query(
                     chat_history=agent_chat_history,
                     access_token="",
                     refresh_token="",
@@ -306,7 +302,7 @@ async def _infer(
                     integrations=integrations,
                 )
             else:  # Integration agent
-                response = response.agent.query(
+                response = await response.agent.query(
                     chat_history=agent_chat_history,
                     access_token=tokens[integration_group].access_token,
                     refresh_token=tokens[integration_group].refresh_token,

@@ -1,4 +1,6 @@
 import { toast } from "@/components/ui/use-toast";
+import { Message } from "@/types/actions/query/base";
+import { roleSchema } from "@/types/actions/query/base";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
@@ -79,4 +81,16 @@ export function extractJsonAndText(input: string): string[] {
   }
 
   return result.filter((item) => item !== "");
+}
+
+export function trimVerificationMessages(messages: Message[]): Message[] {
+  const lastUserMessageIndex = messages
+    .slice()
+    .reverse()
+    .findIndex((msg) => msg.role === roleSchema.Values.user);
+  const trimmedMessages = messages.slice(
+    0,
+    messages.length - lastUserMessageIndex - 1,
+  );
+  return trimmedMessages;
 }

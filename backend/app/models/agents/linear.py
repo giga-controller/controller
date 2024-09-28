@@ -44,7 +44,7 @@ openai_client = OpenAI()
 
 class LinearPostRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -53,7 +53,7 @@ class LinearPostRequestAgent(Agent):
         client_secret: Optional[str],
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
@@ -74,7 +74,7 @@ class LinearPostRequestAgent(Agent):
                             ),
                             function_to_verify=LinearCreateIssueRequest.__name__,
                         )
-                    return create_issue(
+                    return await create_issue(
                         request=response.choices[0]
                         .message.tool_calls[0]
                         .function.parsed_arguments,
@@ -88,11 +88,14 @@ class LinearPostRequestAgent(Agent):
             raise e
 
 
-def create_issue(request: LinearCreateIssueRequest, access_token: str) -> AgentResponse:
+async def create_issue(
+    request: LinearCreateIssueRequest, access_token: str
+) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
-    created_issue: LinearIssue = linear_client.create_issue(request=request)
+    created_issue: LinearIssue = await linear_client.create_issue(request=request)
+    await linear_client.close()
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -117,7 +120,7 @@ LINEAR_POST_REQUEST_AGENT = LinearPostRequestAgent(
 
 class LinearGetRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -126,7 +129,7 @@ class LinearGetRequestAgent(Agent):
         client_secret: Optional[str],
         enable_verification: bool = False,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case LinearGetIssuesRequest.__name__:
@@ -144,53 +147,22 @@ class LinearGetRequestAgent(Agent):
             case _:
                 raise InferenceError(f"Function {function_name} not supported")
 
-        return get_issues(
+        return await get_issues(
             request=request,
             access_token=access_token,
         )
 
 
-def repair(query: LinearIssueQuery, access_token: str) -> dict[str, list]:
-    """Repairs the query parameters by returning the most likely candidate"""
+async def get_issues(
+    request: LinearGetIssuesRequest, access_token: str
+) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
-    zero_match_parameters: dict[str, list[BaseModel]] = (
-        linear_client.get_zero_match_parameters(query=query)
+    retrieved_issues: list[LinearIssue] = await linear_client.get_issues(
+        request=request
     )
-
-    for param, value_lst in zero_match_parameters.items():
-        match param:
-            case "title":
-                possible_titles: list[Title] = [
-                    Title.model_validate(title) for title in linear_client.titles()
-                ]
-            case "assignee":
-                possible_assignees: list[User] = [
-                    User.model_validate(user) for user in linear_client.users()
-                ]
-            case "creator":
-                possible_creators: list[User] = [
-                    User.model_validate(user) for user in linear_client.users()
-                ]
-            case "project":
-                possible_projects: list[Project] = [
-                    Project.model_validate(project)
-                    for project in linear_client.projects()
-                ]
-            case "labels":
-                possible_labels: list[Label] = [
-                    Label.model_validate(label) for label in linear_client.labels()
-                ]
-            case _:
-                raise ValueError(f"Unknown parameter: {param}")
-
-
-def get_issues(request: LinearGetIssuesRequest, access_token: str) -> AgentResponse:
-    linear_client = LinearClient(
-        access_token=access_token,
-    )
-    retrieved_issues: list[LinearIssue] = linear_client.get_issues(request=request)
+    await linear_client.close()
 
     if not retrieved_issues:
         return AgentResponse(
@@ -228,7 +200,8 @@ LINEAR_GET_REQUEST_AGENT = LinearGetRequestAgent(
 
 
 class LinearUpdateRequestAgent(Agent):
-    def query(
+
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -237,7 +210,7 @@ class LinearUpdateRequestAgent(Agent):
         client_secret: Optional[str],
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case LinearUpdateIssuesStateRequest.__name__:
@@ -379,19 +352,22 @@ class LinearUpdateRequestAgent(Agent):
             case _:
                 raise InferenceError(f"Function {function_name} not supported")
 
-        return update_issues(
+        return await update_issues(
             request=response.choices[0].message.tool_calls[0].function.parsed_arguments,
             access_token=access_token,
         )
 
 
-def update_issues(
+async def update_issues(
     request: LinearFilterIssuesRequest, access_token: str
 ) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
-    updated_issues: list[LinearIssue] = linear_client.update_issues(request=request)
+    updated_issues: list[LinearIssue] = await linear_client.update_issues(
+        request=request
+    )
+    await linear_client.close()
 
     if not updated_issues:
         return AgentResponse(
@@ -438,7 +414,8 @@ LINEAR_UPDATE_REQUEST_AGENT = LinearUpdateRequestAgent(
 
 
 class LinearDeleteRequestAgent(Agent):
-    def query(
+
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -447,7 +424,7 @@ class LinearDeleteRequestAgent(Agent):
         client_secret: Optional[str],
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case LinearDeleteIssuesRequest.__name__:
@@ -467,7 +444,7 @@ class LinearDeleteRequestAgent(Agent):
                         ),
                         function_to_verify=LinearDeleteIssuesRequest.__name__,
                     )
-                return delete_issues(
+                return await delete_issues(
                     request=response.choices[0]
                     .message.tool_calls[0]
                     .function.parsed_arguments,
@@ -477,13 +454,17 @@ class LinearDeleteRequestAgent(Agent):
                 raise InferenceError(f"Function {function_name} not supported")
 
 
-def delete_issues(
+async def delete_issues(
     request: LinearDeleteIssuesRequest, access_token: str
 ) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
-    deleted_issues: list[LinearIssue] = linear_client.delete_issues(request=request)
+    deleted_issues: list[LinearIssue] = await linear_client.delete_issues(
+        request=request
+    )
+    await linear_client.close()
+
     if not deleted_issues:
         return AgentResponse(
             agent=SUMMARY_AGENT,
@@ -520,7 +501,8 @@ LINEAR_DELETE_REQUEST_AGENT = LinearDeleteRequestAgent(
 
 
 class LinearRepairRequestAgent(Agent):
-    def query(
+
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -529,7 +511,43 @@ class LinearRepairRequestAgent(Agent):
         client_secret: Optional[str],
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
+
+
+# def repair(query: LinearIssueQuery, access_token: str) -> dict[str, list]:
+#     """Repairs the query parameters by returning the most likely candidate"""
+#     linear_client = LinearClient(
+#         access_token=access_token,
+#     )
+#     zero_match_parameters: dict[str, list[BaseModel]] = (
+#         linear_client.get_zero_match_parameters(query=query)
+#     )
+
+#     for param, value_lst in zero_match_parameters.items():
+#         match param:
+#             case "title":
+#                 possible_titles: list[Title] = [
+#                     Title.model_validate(title) for title in linear_client.titles()
+#                 ]
+#             case "assignee":
+#                 possible_assignees: list[User] = [
+#                     User.model_validate(user) for user in linear_client.users()
+#                 ]
+#             case "creator":
+#                 possible_creators: list[User] = [
+#                     User.model_validate(user) for user in linear_client.users()
+#                 ]
+#             case "project":
+#                 possible_projects: list[Project] = [
+#                     Project.model_validate(project)
+#                     for project in linear_client.projects()
+#                 ]
+#             case "labels":
+#                 possible_labels: list[Label] = [
+#                     Label.model_validate(label) for label in linear_client.labels()
+#                 ]
+#             case _:
+#                 raise ValueError(f"Unknown parameter: {param}")
 
 
 LINEAR_REPAIR_REQUEST_AGENT = LinearRepairRequestAgent(

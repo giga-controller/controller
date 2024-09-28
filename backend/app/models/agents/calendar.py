@@ -28,7 +28,7 @@ openai_client = OpenAI()
 
 
 class CalendarCreateEventAgent(Agent):
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -37,7 +37,7 @@ class CalendarCreateEventAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
@@ -58,7 +58,7 @@ class CalendarCreateEventAgent(Agent):
                             ),
                             function_to_verify=CalendarCreateEventRequest.__name__,
                         )
-                    return create_calendar_event(
+                    return await create_calendar_event(
                         request=response.choices[0]
                         .message.tool_calls[0]
                         .function.parsed_arguments,
@@ -74,7 +74,7 @@ class CalendarCreateEventAgent(Agent):
             raise e
 
 
-def create_calendar_event(
+async def create_calendar_event(
     request: CalendarCreateEventRequest,
     access_token: str,
     refresh_token: str,
@@ -87,7 +87,9 @@ def create_calendar_event(
         client_id=client_id,
         client_secret=client_secret,
     )
-    created_event: CalendarEvent = calendar_client.create_event(request=request)
+    created_event: CalendarEvent = await calendar_client.create_event(request=request)
+    await calendar_client.close()
+
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -108,7 +110,7 @@ CALENDAR_CREATE_EVENT_AGENT = CalendarCreateEventAgent(
 
 
 class CalendarGetEventsAgent(Agent):
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -117,12 +119,12 @@ class CalendarGetEventsAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
                 case CalendarGetEventsRequest.__name__:
-                    return get_calendar_events(
+                    return await get_calendar_events(
                         request=response.choices[0]
                         .message.tool_calls[0]
                         .function.parsed_arguments,
@@ -138,7 +140,7 @@ class CalendarGetEventsAgent(Agent):
             raise e
 
 
-def get_calendar_events(
+async def get_calendar_events(
     request: CalendarGetEventsRequest,
     access_token: str,
     refresh_token: str,
@@ -151,7 +153,11 @@ def get_calendar_events(
         client_id=client_id,
         client_secret=client_secret,
     )
-    retrieved_events: list[CalendarEvent] = calendar_client.get_events(request=request)
+    retrieved_events: list[CalendarEvent] = await calendar_client.get_events(
+        request=request
+    )
+    await calendar_client.close()
+
     if not retrieved_events:
         return AgentResponse(
             agent=SUMMARY_AGENT,
@@ -181,7 +187,7 @@ CALENDAR_GET_EVENTS_AGENT = CalendarGetEventsAgent(
 
 
 class CalendarUpdateEventAgent(Agent):
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -190,7 +196,7 @@ class CalendarUpdateEventAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
@@ -211,7 +217,7 @@ class CalendarUpdateEventAgent(Agent):
                             ),
                             function_to_verify=CalendarUpdateEventRequest.__name__,
                         )
-                    return update_calendar_event(
+                    return await update_calendar_event(
                         request=response.choices[0]
                         .message.tool_calls[0]
                         .function.parsed_arguments,
@@ -227,7 +233,7 @@ class CalendarUpdateEventAgent(Agent):
             raise e
 
 
-def update_calendar_event(
+async def update_calendar_event(
     request: CalendarUpdateEventRequest,
     access_token: str,
     refresh_token: str,
@@ -240,7 +246,9 @@ def update_calendar_event(
         client_id=client_id,
         client_secret=client_secret,
     )
-    updated_event: CalendarEvent = calendar_client.update_event(request=request)
+    updated_event: CalendarEvent = await calendar_client.update_event(request=request)
+    await calendar_client.close()
+
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -261,7 +269,7 @@ CALENDAR_UPDATE_EVENT_AGENT = CalendarUpdateEventAgent(
 
 
 class CalendarDeleteEventsAgent(Agent):
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -270,7 +278,7 @@ class CalendarDeleteEventsAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
@@ -291,7 +299,7 @@ class CalendarDeleteEventsAgent(Agent):
                             ),
                             function_to_verify=CalendarDeleteEventsRequest.__name__,
                         )
-                    return delete_calendar_events(
+                    return await delete_calendar_events(
                         request=response.choices[0]
                         .message.tool_calls[0]
                         .function.parsed_arguments,
@@ -307,7 +315,7 @@ class CalendarDeleteEventsAgent(Agent):
             raise e
 
 
-def delete_calendar_events(
+async def delete_calendar_events(
     request: CalendarDeleteEventsRequest,
     access_token: str,
     refresh_token: str,
@@ -320,7 +328,10 @@ def delete_calendar_events(
         client_id=client_id,
         client_secret=client_secret,
     )
-    deleted_events: list[CalendarEvent] = calendar_client.delete_events(request=request)
+    deleted_events: list[CalendarEvent] = await calendar_client.delete_events(
+        request=request
+    )
+    await calendar_client.close()
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(

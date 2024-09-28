@@ -108,7 +108,7 @@ export default function ChatContainer({
           >
             {message.role === roleSchema.Values.assistant && (
               <Avatar className="mr-2">
-                <AvatarImage src="/path/to/assistant-avatar.png" />
+                <AvatarImage src="/assistant.png" />
                 <AvatarFallback>AI</AvatarFallback>
               </Avatar>
             )}
@@ -150,7 +150,7 @@ export default function ChatContainer({
       {isResponseFetching && (
         <div className="flex items-start mb-4 justify-start">
           <Avatar className="mr-2">
-            <AvatarImage src="/path/to/assistant-avatar.png" />
+            <AvatarImage src="/assistant.png" />
             <AvatarFallback>AI</AvatarFallback>
           </Avatar>
           <div className="p-2 rounded-lg bg-gray-300 text-black">

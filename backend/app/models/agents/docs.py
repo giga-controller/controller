@@ -27,7 +27,7 @@ openai_client = OpenAI()
 
 
 class DocsCreateRequestAgent(Agent):
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -36,7 +36,7 @@ class DocsCreateRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
@@ -57,7 +57,7 @@ class DocsCreateRequestAgent(Agent):
                             ),
                             function_to_verify=DocsCreateRequest.__name__,
                         )
-                    return create_document(
+                    return await create_document(
                         request=response.choices[0]
                         .message.tool_calls[0]
                         .function.parsed_arguments,
@@ -73,7 +73,7 @@ class DocsCreateRequestAgent(Agent):
             raise e
 
 
-def create_document(
+async def create_document(
     request: DocsCreateRequest,
     access_token: str,
     refresh_token: str,
@@ -86,7 +86,8 @@ def create_document(
         client_id=client_id,
         client_secret=client_secret,
     )
-    created_document: Docs = docs_client.create_document(request=request)
+    created_document: Docs = await docs_client.create_document(request=request)
+    await docs_client.close()
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -107,7 +108,7 @@ DOCS_CREATE_REQUEST_AGENT = DocsCreateRequestAgent(
 
 
 class DocsGetRequestAgent(Agent):
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -116,12 +117,12 @@ class DocsGetRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
                 case DocsGetRequest.__name__:
-                    return get_document(
+                    return await get_document(
                         request=response.choices[0]
                         .message.tool_calls[0]
                         .function.parsed_arguments,
@@ -137,7 +138,7 @@ class DocsGetRequestAgent(Agent):
             raise e
 
 
-def get_document(
+async def get_document(
     request: DocsGetRequest,
     access_token: str,
     refresh_token: str,
@@ -150,7 +151,8 @@ def get_document(
         client_id=client_id,
         client_secret=client_secret,
     )
-    retrieved_document: Docs = docs_client.get_document(request=request)
+    retrieved_document: Docs = await docs_client.get_document(request=request)
+    await docs_client.close()
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -171,7 +173,7 @@ DOCS_GET_REQUEST_AGENT = DocsGetRequestAgent(
 
 
 class DocsUpdateRequestAgent(Agent):
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -180,7 +182,7 @@ class DocsUpdateRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         try:
             match function_name:
@@ -201,7 +203,7 @@ class DocsUpdateRequestAgent(Agent):
                             ),
                             function_to_verify=DocsUpdateRequest.__name__,
                         )
-                    return update_document(
+                    return await update_document(
                         request=response.choices[0]
                         .message.tool_calls[0]
                         .function.parsed_arguments,
@@ -217,7 +219,7 @@ class DocsUpdateRequestAgent(Agent):
             raise e
 
 
-def update_document(
+async def update_document(
     request: DocsUpdateRequest,
     access_token: str,
     refresh_token: str,
@@ -230,7 +232,8 @@ def update_document(
         client_id=client_id,
         client_secret=client_secret,
     )
-    updated_document: Docs = docs_client.update_document(request=request)
+    updated_document: Docs = await docs_client.update_document(request=request)
+    await docs_client.close()
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(

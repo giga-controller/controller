@@ -21,7 +21,7 @@ openai_client = OpenAI()
 
 class TriageAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,

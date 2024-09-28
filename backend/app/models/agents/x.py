@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 
 class XPostRequestAgent(Agent):
 
-    def query(
+    async def query(
         self,
         chat_history: list[dict],
         access_token: str,
@@ -30,7 +30,7 @@ class XPostRequestAgent(Agent):
         client_secret: str,
         enable_verification: bool,
     ) -> AgentResponse:
-        response, function_name = self.get_response(chat_history=chat_history)
+        response, function_name = await self.get_response(chat_history=chat_history)
 
         match function_name:
             case XSendTweetRequest.__name__:
@@ -50,7 +50,7 @@ class XPostRequestAgent(Agent):
                         ),
                         function_to_verify=XSendTweetRequest.__name__,
                     )
-                return send_tweet(
+                return await send_tweet(
                     request=response.choices[0]
                     .message.tool_calls[0]
                     .function.parsed_arguments,
@@ -58,10 +58,9 @@ class XPostRequestAgent(Agent):
                 )
 
 
-def send_tweet(request: XSendTweetRequest, access_token: str) -> AgentResponse:
+async def send_tweet(request: XSendTweetRequest, access_token: str) -> AgentResponse:
     client = XClient(access_token=access_token)
-    client_response = client.send_tweet(request=request)
-    print(client_response)
+    client_response = await client.send_tweet(request=request)
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
