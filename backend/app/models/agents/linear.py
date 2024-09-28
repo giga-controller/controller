@@ -88,7 +88,9 @@ class LinearPostRequestAgent(Agent):
             raise e
 
 
-async def create_issue(request: LinearCreateIssueRequest, access_token: str) -> AgentResponse:
+async def create_issue(
+    request: LinearCreateIssueRequest, access_token: str
+) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
@@ -151,11 +153,15 @@ class LinearGetRequestAgent(Agent):
         )
 
 
-async def get_issues(request: LinearGetIssuesRequest, access_token: str) -> AgentResponse:
+async def get_issues(
+    request: LinearGetIssuesRequest, access_token: str
+) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
-    retrieved_issues: list[LinearIssue] = await linear_client.get_issues(request=request)
+    retrieved_issues: list[LinearIssue] = await linear_client.get_issues(
+        request=request
+    )
     await linear_client.close()
 
     if not retrieved_issues:
@@ -358,7 +364,9 @@ async def update_issues(
     linear_client = LinearClient(
         access_token=access_token,
     )
-    updated_issues: list[LinearIssue] = await linear_client.update_issues(request=request)
+    updated_issues: list[LinearIssue] = await linear_client.update_issues(
+        request=request
+    )
     await linear_client.close()
 
     if not updated_issues:
@@ -452,7 +460,9 @@ async def delete_issues(
     linear_client = LinearClient(
         access_token=access_token,
     )
-    deleted_issues: list[LinearIssue] = await linear_client.delete_issues(request=request)
+    deleted_issues: list[LinearIssue] = await linear_client.delete_issues(
+        request=request
+    )
     await linear_client.close()
 
     if not deleted_issues:

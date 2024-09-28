@@ -50,7 +50,7 @@ class XPostRequestAgent(Agent):
                         ),
                         function_to_verify=XSendTweetRequest.__name__,
                     )
-                return send_tweet(
+                return await send_tweet(
                     request=response.choices[0]
                     .message.tool_calls[0]
                     .function.parsed_arguments,
@@ -58,10 +58,9 @@ class XPostRequestAgent(Agent):
                 )
 
 
-def send_tweet(request: XSendTweetRequest, access_token: str) -> AgentResponse:
+async def send_tweet(request: XSendTweetRequest, access_token: str) -> AgentResponse:
     client = XClient(access_token=access_token)
-    client_response = client.send_tweet(request=request)
-    print(client_response)
+    client_response = await client.send_tweet(request=request)
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(

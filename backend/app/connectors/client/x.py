@@ -1,3 +1,5 @@
+import asyncio
+
 import tweepy
 
 from app.models.integrations.x import Tweet, XSendTweetRequest
@@ -7,8 +9,11 @@ class XClient:
     def __init__(self, access_token: str):
         self.client = tweepy.Client(bearer_token=access_token)
 
-    def send_tweet(self, request: XSendTweetRequest) -> Tweet:
-        response = self.client.create_tweet(text=request.text, user_auth=False)
+    async def send_tweet(self, request: XSendTweetRequest) -> Tweet:
+        loop = asyncio.get_event_loop()
+        response = await loop.run_in_executor(
+            None, self.client.create_tweet, request.text, False
+        )
         return Tweet.model_validate(response.data)
 
     # def get_user_tweets(self, user_id: str, max_results: int = 10):

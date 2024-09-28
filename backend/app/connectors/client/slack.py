@@ -1,7 +1,7 @@
 import logging
 from typing import Any
 
-from slack_sdk import WebClient
+from slack_sdk.web.async_client import AsyncWebClient
 
 from app.models.integrations.slack import (
     SlackGetChannelIdRequest,
@@ -15,12 +15,12 @@ log = logging.getLogger(__name__)
 
 class SlackClient:
     def __init__(self, access_token: str):
-        self.client = WebClient(token=access_token)
+        self.client = AsyncWebClient(token=access_token)
 
-    def get_all_channel_ids(
+    async def get_all_channel_ids(
         self, request: SlackGetChannelIdRequest
     ) -> list[dict[str, Any]]:
-        response = self.client.conversations_list()
+        response = await self.client.conversations_list()
         channels = response["channels"]
         request_channel_names_set: set[str] = {
             name.lower() for name in request.channel_names
@@ -33,8 +33,8 @@ class SlackClient:
         ]
         return channel_info
 
-    def send_message(self, request: SlackSendMessageRequest):
-        response = self.client.chat_postMessage(
+    async def send_message(self, request: SlackSendMessageRequest):
+        response = await self.client.chat_postMessage(
             channel=request.channel_id, text=request.text
         )
         return response

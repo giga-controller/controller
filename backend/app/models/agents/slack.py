@@ -53,7 +53,7 @@ class SlackPostRequestAgent(Agent):
                         ),
                         function_to_verify=SlackSendMessageRequest.__name__,
                     )
-                return send_message(
+                return await send_message(
                     request=response.choices[0]
                     .message.tool_calls[0]
                     .function.parsed_arguments,
@@ -61,9 +61,11 @@ class SlackPostRequestAgent(Agent):
                 )
 
 
-def send_message(request: SlackSendMessageRequest, access_token: str) -> AgentResponse:
+async def send_message(
+    request: SlackSendMessageRequest, access_token: str
+) -> AgentResponse:
     client = SlackClient(access_token=access_token)
-    client_response = client.send_message(request=request)
+    client_response = await client.send_message(request=request)
     if not client_response["ok"]:
         return AgentResponse(
             agent=SUMMARY_AGENT,
@@ -116,7 +118,7 @@ class SlackGetRequestAgent(Agent):
 
         match function_name:
             case SlackGetChannelIdRequest.__name__:
-                return get_all_channel_ids(
+                return await get_all_channel_ids(
                     request=response.choices[0]
                     .message.tool_calls[0]
                     .function.parsed_arguments,
@@ -124,11 +126,13 @@ class SlackGetRequestAgent(Agent):
                 )
 
 
-def get_all_channel_ids(
+async def get_all_channel_ids(
     request: SlackGetChannelIdRequest, access_token: str
 ) -> AgentResponse:
     client = SlackClient(access_token=access_token)
-    client_response: list[dict[str, Any]] = client.get_all_channel_ids(request=request)
+    client_response: list[dict[str, Any]] = await client.get_all_channel_ids(
+        request=request
+    )
     if not client_response:
         return AgentResponse(
             agent=SUMMARY_AGENT,

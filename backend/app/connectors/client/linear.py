@@ -50,7 +50,7 @@ class LinearClient:
             headers=self.headers,
         )
         self.client = Client(transport=transport, fetch_schema_from_transport=True)
-    
+
     async def close(self):
         await self.client.transport.close()
 
@@ -135,16 +135,28 @@ class LinearClient:
             """
         )
 
-        state_id_task = asyncio.create_task(self.get_state_id_by_name(state=request.state))
-        assignee_id_task = asyncio.create_task(self.get_id_by_name(name=request.assignee, target="users"))
-        cycle_id_task = asyncio.create_task(self.get_id_by_number(number=request.cycle, target="cycles"))
-        project_id_task = asyncio.create_task(self.get_id_by_name(name=request.project, target="projects"))
+        state_id_task = asyncio.create_task(
+            self.get_state_id_by_name(state=request.state)
+        )
+        assignee_id_task = asyncio.create_task(
+            self.get_id_by_name(name=request.assignee, target="users")
+        )
+        cycle_id_task = asyncio.create_task(
+            self.get_id_by_number(number=request.cycle, target="cycles")
+        )
+        project_id_task = asyncio.create_task(
+            self.get_id_by_name(name=request.project, target="projects")
+        )
         team_id_task = asyncio.create_task(self.teams())
 
         state_id, assignee_id, cycle_id, project_id, teams = await asyncio.gather(
-            state_id_task, assignee_id_task, cycle_id_task, project_id_task, team_id_task
+            state_id_task,
+            assignee_id_task,
+            cycle_id_task,
+            project_id_task,
+            team_id_task,
         )
-        
+
         variables = {
             "input": {
                 "title": request.title,
@@ -156,7 +168,9 @@ class LinearClient:
                 "cycleId": cycle_id,
                 "labels": request.labels if request.labels else None,
                 "projectId": project_id,
-                "teamId": teams[0]["id"],  # QUICK FIX WE ONLY GET FROM FIRST TEAM (THIS IS A HACK)
+                "teamId": teams[0][
+                    "id"
+                ],  # QUICK FIX WE ONLY GET FROM FIRST TEAM (THIS IS A HACK)
             }
         }
 
@@ -198,16 +212,21 @@ class LinearClient:
             """
             )
             get_issue_tasks = [
-                asyncio.create_task(self.client.execute_async(query, variable_values={"id": issue_id}))
+                asyncio.create_task(
+                    self.client.execute_async(query, variable_values={"id": issue_id})
+                )
                 for issue_id in request.issue_ids
             ]
             get_issue_results = await asyncio.gather(*get_issue_tasks)
-            
+
             flatten_issue_tasks = [
-                asyncio.create_task(_flatten_linear_response_issue(result[QUERY_OBJ_NAME])) for result in get_issue_results
+                asyncio.create_task(
+                    _flatten_linear_response_issue(result[QUERY_OBJ_NAME])
+                )
+                for result in get_issue_results
             ]
             flattened_issue_results = await asyncio.gather(*flatten_issue_tasks)
-            
+
             return flattened_issue_results
 
         return await self._get_issues_with_boolean_clause(issue_query=request.query)
@@ -366,15 +385,22 @@ class LinearClient:
             variables["filter"][boolean_clause].extend(
                 [{"estimate": {"eq": _estimate}} for _estimate in issue_query.estimate]
             )
-        get_issue_results = await self.client.execute_async(query, variable_values=variables)
+        get_issue_results = await self.client.execute_async(
+            query, variable_values=variables
+        )
         flatten_issue_tasks = [
-            asyncio.create_task(_flatten_linear_response_issue(result)) for result in get_issue_results[QUERY_OBJ_GROUP][QUERY_OBJ_LIST]
+            asyncio.create_task(_flatten_linear_response_issue(result))
+            for result in get_issue_results[QUERY_OBJ_GROUP][QUERY_OBJ_LIST]
         ]
-        flattened_issue_results: list[LinearIssue] = await asyncio.gather(*flatten_issue_tasks)
-            
+        flattened_issue_results: list[LinearIssue] = await asyncio.gather(
+            *flatten_issue_tasks
+        )
+
         return flattened_issue_results
 
-    async def update_issues(self, request: LinearFilterIssuesRequest) -> list[LinearIssue]:
+    async def update_issues(
+        self, request: LinearFilterIssuesRequest
+    ) -> list[LinearIssue]:
         variables = {}
 
         issues_to_update = await self.get_issues(request=request)
@@ -416,19 +442,30 @@ class LinearClient:
             else:
                 raise ValueError(f"Unsupported request type: {type(request)}")
 
-            update_issue_tasks.append(asyncio.create_task(self.client.execute_async(mutation, variable_values=variables)))
-            
-        update_issue_results = await asyncio.gather(*update_issue_tasks) 
-    
+            update_issue_tasks.append(
+                asyncio.create_task(
+                    self.client.execute_async(mutation, variable_values=variables)
+                )
+            )
+
+        update_issue_results = await asyncio.gather(*update_issue_tasks)
+
         flatten_issue_tasks = [
-            asyncio.create_task(_flatten_linear_response_issue(result[mutation_name]["issue"])) for result in update_issue_results
+            asyncio.create_task(
+                _flatten_linear_response_issue(result[mutation_name]["issue"])
+            )
+            for result in update_issue_results
         ]
-        
-        flatten_issue_results: list[LinearIssue] = await asyncio.gather(*flatten_issue_tasks)
+
+        flatten_issue_results: list[LinearIssue] = await asyncio.gather(
+            *flatten_issue_tasks
+        )
 
         return flatten_issue_results
 
-    async def delete_issues(self, request: LinearDeleteIssuesRequest) -> list[LinearIssue]:
+    async def delete_issues(
+        self, request: LinearDeleteIssuesRequest
+    ) -> list[LinearIssue]:
         issues_to_delete = await self.get_issues(request=request)
 
         MUTATION_NAME: str = "issueDelete"
@@ -443,10 +480,12 @@ class LinearClient:
         )
 
         delete_issue_tasks = [
-            asyncio.create_task(self.client.execute_async(mutation, variable_values={"id": issue.id}))
+            asyncio.create_task(
+                self.client.execute_async(mutation, variable_values={"id": issue.id})
+            )
             for issue in issues_to_delete
         ]
-        
+
         await asyncio.gather(*delete_issue_tasks)
 
         return issues_to_delete
@@ -457,7 +496,7 @@ class LinearClient:
     async def get_id_by_name(self, name: Optional[str], target: str) -> Optional[str]:
         if not name:
             return None
-        
+
         query = f"""
         query GetIdByName($name: String!) {{
             {target}(filter: {{ name: {{ eq: $name }} }}) {{
@@ -472,20 +511,24 @@ class LinearClient:
         payload = {"query": query, "variables": variables}
 
         async with httpx.AsyncClient() as client:
-            response = await client.post(LINEAR_API_URL, json=payload, headers=self.headers)
+            response = await client.post(
+                LINEAR_API_URL, json=payload, headers=self.headers
+            )
 
         result = response.json()
         users = result.get("data", {}).get(target, {}).get("nodes", [])
 
         if users:
             return users[0]["id"]
-        
+
         return None
 
-    async def get_id_by_number(self, number: Optional[int], target: str) -> Optional[str]:
+    async def get_id_by_number(
+        self, number: Optional[int], target: str
+    ) -> Optional[str]:
         if not number:
             return None
-        
+
         query = f"""
         query GetIdByNumber($number: Float!) {{
             {target}(filter: {{ number: {{ eq: $number }} }}) {{
@@ -500,7 +543,9 @@ class LinearClient:
         payload = {"query": query, "variables": variables}
 
         async with httpx.AsyncClient() as client:
-            response = await client.post(LINEAR_API_URL, json=payload, headers=self.headers)
+            response = await client.post(
+                LINEAR_API_URL, json=payload, headers=self.headers
+            )
 
         result = response.json()
         cycles = result.get("data", {}).get(target, {}).get("nodes", [])
@@ -512,7 +557,7 @@ class LinearClient:
     async def get_state_id_by_name(self, state: Optional[State]) -> Optional[str]:
         if not state:
             return None
-        
+
         name: str = state.value
         query = """
         query GetStateIdByName {
@@ -527,7 +572,9 @@ class LinearClient:
 
         payload = {"query": query}
         async with httpx.AsyncClient() as client:
-            response = await client.post(LINEAR_API_URL, json=payload, headers=self.headers)
+            response = await client.post(
+                LINEAR_API_URL, json=payload, headers=self.headers
+            )
 
         result = response.json()
         states = result.get("data", {}).get("workflowStates", {}).get("nodes", [])
@@ -555,7 +602,9 @@ class LinearClient:
         variables = {"name": name}
         payload = {"query": query, "variables": variables}
         async with httpx.AsyncClient() as client:
-            response = await client.post(LINEAR_API_URL, json=payload, headers=self.headers)
+            response = await client.post(
+                LINEAR_API_URL, json=payload, headers=self.headers
+            )
 
         result = response.json()
         labels = result.get("data", {}).get("issueLabels", {}).get("nodes", [])
@@ -564,6 +613,7 @@ class LinearClient:
             return labels[0]["id"]
 
         return None
+
 
 async def _flatten_linear_response_issue(issue: dict) -> LinearIssue:
     if "labels" in issue and "nodes" in issue["labels"]:

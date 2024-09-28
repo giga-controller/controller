@@ -235,12 +235,12 @@ class QueryService:
                     client_secret=tokens[Integration.CALENDAR].client_secret,
                 )
             case SlackSendMessageRequest.__name__:
-                client_response = send_message(
+                client_response = await send_message(
                     request=SlackSendMessageRequest.model_validate(client_argument),
                     access_token=tokens[Integration.SLACK].access_token,
                 )
             case XSendTweetRequest.__name__:
-                client_response = send_tweet(
+                client_response = await send_tweet(
                     request=XSendTweetRequest.model_validate(client_argument),
                     access_token=tokens[Integration.X].access_token,
                 )
