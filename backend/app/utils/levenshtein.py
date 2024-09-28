@@ -26,7 +26,7 @@ def get_most_similar_string(target: str, candidates: list[str]) -> str:
             _process_string(candidate), _process_string(target)
         ),
     )
-
+    # Return the original value if the similarity is less than the threshold
     if ratio(most_similar, target) < THRESHOLD:
-        return None
+        return target
     return most_similar
