@@ -153,9 +153,11 @@ async def get_calendar_events(
         client_id=client_id,
         client_secret=client_secret,
     )
-    retrieved_events: list[CalendarEvent] = await calendar_client.get_events(request=request)
+    retrieved_events: list[CalendarEvent] = await calendar_client.get_events(
+        request=request
+    )
     await calendar_client.close()
-    
+
     if not retrieved_events:
         return AgentResponse(
             agent=SUMMARY_AGENT,
@@ -246,7 +248,7 @@ async def update_calendar_event(
     )
     updated_event: CalendarEvent = await calendar_client.update_event(request=request)
     await calendar_client.close()
-    
+
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -326,7 +328,9 @@ async def delete_calendar_events(
         client_id=client_id,
         client_secret=client_secret,
     )
-    deleted_events: list[CalendarEvent] = await calendar_client.delete_events(request=request)
+    deleted_events: list[CalendarEvent] = await calendar_client.delete_events(
+        request=request
+    )
     await calendar_client.close()
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,

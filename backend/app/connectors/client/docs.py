@@ -29,7 +29,7 @@ class GoogleDocsClient:
         self.session = aiohttp.ClientSession()
         self.base_url = "https://docs.googleapis.com/v1/documents"
         self.headers = {"Authorization": f"Bearer {access_token}"}
-        
+
     async def close(self):
         await self.session.close()
 
@@ -42,7 +42,6 @@ class GoogleDocsClient:
             ) as response:
                 print(response)
                 document = await response.json()
-
 
             # If content is provided, update the document
             if request.content:

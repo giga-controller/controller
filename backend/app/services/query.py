@@ -12,7 +12,7 @@ from app.models.agents.calendar import (
     update_calendar_event,
 )
 from app.models.agents.docs import create_document, get_document, update_document
-from app.models.agents.gmail import delete_emails, mark_as_read, send_email
+from app.models.agents.gmail import mark_as_read, send_email
 from app.models.agents.linear import create_issue, delete_issues, update_issues
 from app.models.agents.main import MAIN_TRIAGE_AGENT
 from app.models.agents.slack import send_message
@@ -101,7 +101,7 @@ class QueryService:
 
         match function_to_verify:
             case GmailMarkAsReadRequest.__name__:
-                client_response = mark_as_read(
+                client_response = await mark_as_read(
                     request=GmailMarkAsReadRequest.model_validate(client_argument),
                     access_token=tokens[Integration.GMAIL].access_token,
                     refresh_token=tokens[Integration.GMAIL].refresh_token,
@@ -109,21 +109,21 @@ class QueryService:
                     client_secret=tokens[Integration.GMAIL].client_secret,
                 )
             case GmailSendEmailRequest.__name__:
-                client_response = send_email(
+                client_response = await send_email(
                     request=GmailSendEmailRequest.model_validate(client_argument),
                     access_token=tokens[Integration.GMAIL].access_token,
                     refresh_token=tokens[Integration.GMAIL].refresh_token,
                     client_id=tokens[Integration.GMAIL].client_id,
                     client_secret=tokens[Integration.GMAIL].client_secret,
                 )
-            case GmailDeleteEmailsRequest.__name__:
-                client_response = delete_emails(
-                    request=GmailDeleteEmailsRequest.model_validate(client_argument),
-                    access_token=tokens[Integration.GMAIL].access_token,
-                    refresh_token=tokens[Integration.GMAIL].refresh_token,
-                    client_id=tokens[Integration.GMAIL].client_id,
-                    client_secret=tokens[Integration.GMAIL].client_secret,
-                )
+            # case GmailDeleteEmailsRequest.__name__:
+            #     client_response = await delete_emails(
+            #         request=GmailDeleteEmailsRequest.model_validate(client_argument),
+            #         access_token=tokens[Integration.GMAIL].access_token,
+            #         refresh_token=tokens[Integration.GMAIL].refresh_token,
+            #         client_id=tokens[Integration.GMAIL].client_id,
+            #         client_secret=tokens[Integration.GMAIL].client_secret,
+            #     )
             case DocsCreateRequest.__name__:
                 client_response = await create_document(
                     request=DocsCreateRequest.model_validate(client_argument),

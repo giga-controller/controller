@@ -192,7 +192,7 @@ LINEAR_GET_REQUEST_AGENT = LinearGetRequestAgent(
 
 
 class LinearUpdateRequestAgent(Agent):
-    
+
     async def query(
         self,
         chat_history: list[dict],
@@ -403,7 +403,7 @@ LINEAR_UPDATE_REQUEST_AGENT = LinearUpdateRequestAgent(
 
 
 class LinearDeleteRequestAgent(Agent):
-    
+
     async def query(
         self,
         chat_history: list[dict],
@@ -486,7 +486,7 @@ LINEAR_DELETE_REQUEST_AGENT = LinearDeleteRequestAgent(
 
 
 class LinearRepairRequestAgent(Agent):
-    
+
     async def query(
         self,
         chat_history: list[dict],
@@ -533,7 +533,8 @@ def repair(query: LinearIssueQuery, access_token: str) -> dict[str, list]:
                 ]
             case _:
                 raise ValueError(f"Unknown parameter: {param}")
-            
+
+
 LINEAR_REPAIR_REQUEST_AGENT = LinearRepairRequestAgent(
     name="Linear Repair Request Agent",
     integration_group=Integration.LINEAR,

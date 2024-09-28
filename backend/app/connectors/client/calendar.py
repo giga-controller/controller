@@ -1,5 +1,6 @@
-import aiohttp
 import asyncio
+
+import aiohttp
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
@@ -30,9 +31,11 @@ class GoogleCalendarClient:
         )
         self.service = build("calendar", "v3", credentials=self.credentials)
         self.session = aiohttp.ClientSession()
-        self.base_url = "https://www.googleapis.com/calendar/v3/calendars/primary/events"
+        self.base_url = (
+            "https://www.googleapis.com/calendar/v3/calendars/primary/events"
+        )
         self.headers = {"Authorization": f"Bearer {access_token}"}
-        
+
     async def close(self):
         await self.session.close()
 
@@ -54,12 +57,10 @@ class GoogleCalendarClient:
             }
 
             async with self.session.post(
-                self.base_url,
-                json=event,
-                headers=self.headers
+                self.base_url, json=event, headers=self.headers
             ) as response:
                 created_event = await response.json()
-                
+
             return CalendarEvent(
                 id=created_event["id"],
                 summary=request.summary,
@@ -74,19 +75,23 @@ class GoogleCalendarClient:
         except Exception as e:
             raise InferenceError(f"Error creating event via CalendarClient: {str(e)}")
 
-    async def get_events(self, request: CalendarGetEventsRequest) -> list[CalendarEvent]:
+    async def get_events(
+        self, request: CalendarGetEventsRequest
+    ) -> list[CalendarEvent]:
         try:
             loop = asyncio.get_event_loop()
             events_result = await loop.run_in_executor(
                 None,
-                lambda: self.service.events().list(
+                lambda: self.service.events()
+                .list(
                     calendarId="primary",
                     timeMin=request.time_min,
                     timeMax=request.time_max,
                     maxResults=request.max_results,
                     singleEvents=True,
                     orderBy="startTime",
-                ).execute()
+                )
+                .execute(),
             )
             events = events_result.get("items", [])
 
@@ -123,13 +128,13 @@ class GoogleCalendarClient:
                     None,
                     lambda: self.service.events()
                     .get(calendarId="primary", eventId=event_id)
-                    .execute()
+                    .execute(),
                 )
                 await asyncio.get_event_loop().run_in_executor(
                     None,
                     lambda: self.service.events()
                     .delete(calendarId="primary", eventId=event_id)
-                    .execute()
+                    .execute(),
                 )
                 deleted_events.append(
                     CalendarEvent(
@@ -159,7 +164,7 @@ class GoogleCalendarClient:
                 None,
                 lambda: self.service.events()
                 .get(calendarId="primary", eventId=request.event_id)
-                .execute()
+                .execute(),
             )
 
             if request.summary:
@@ -181,7 +186,7 @@ class GoogleCalendarClient:
                 None,
                 lambda: self.service.events()
                 .update(calendarId="primary", eventId=request.event_id, body=event)
-                .execute()
+                .execute(),
             )
 
             return CalendarEvent(

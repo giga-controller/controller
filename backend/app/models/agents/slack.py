@@ -102,7 +102,7 @@ SLACK_POST_REQUEST_AGENT = SlackPostRequestAgent(
 
 
 class SlackGetRequestAgent(Agent):
-    
+
     async def query(
         self,
         chat_history: list[dict],
