@@ -93,4 +93,4 @@ export function trimVerificationMessages(messages: Message[]): Message[] {
     messages.length - lastUserMessageIndex - 1,
   );
   return trimmedMessages;
-};
+}
