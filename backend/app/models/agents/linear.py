@@ -93,6 +93,7 @@ async def create_issue(request: LinearCreateIssueRequest, access_token: str) -> 
         access_token=access_token,
     )
     created_issue: LinearIssue = await linear_client.create_issue(request=request)
+    await linear_client.close()
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -155,6 +156,7 @@ async def get_issues(request: LinearGetIssuesRequest, access_token: str) -> Agen
         access_token=access_token,
     )
     retrieved_issues: list[LinearIssue] = await linear_client.get_issues(request=request)
+    await linear_client.close()
 
     if not retrieved_issues:
         return AgentResponse(
@@ -357,6 +359,7 @@ async def update_issues(
         access_token=access_token,
     )
     updated_issues: list[LinearIssue] = await linear_client.update_issues(request=request)
+    await linear_client.close()
 
     if not updated_issues:
         return AgentResponse(
@@ -450,6 +453,8 @@ async def delete_issues(
         access_token=access_token,
     )
     deleted_issues: list[LinearIssue] = await linear_client.delete_issues(request=request)
+    await linear_client.close()
+
     if not deleted_issues:
         return AgentResponse(
             agent=SUMMARY_AGENT,

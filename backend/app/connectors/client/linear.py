@@ -2,7 +2,6 @@ import asyncio
 import logging
 from collections import defaultdict
 from typing import Optional
-from unittest import result
 
 import httpx
 from gql import Client, gql
@@ -51,6 +50,9 @@ class LinearClient:
             headers=self.headers,
         )
         self.client = Client(transport=transport, fetch_schema_from_transport=True)
+    
+    async def close(self):
+        await self.client.transport.close()
 
     async def query_grapql(self, query):
         async with httpx.AsyncClient() as client:
@@ -168,7 +170,6 @@ class LinearClient:
         )
 
     async def get_issues(self, request: LinearGetIssuesRequest) -> list[LinearIssue]:
-        validated_results: list[LinearIssue] = []
         if request.issue_ids:
             QUERY_OBJ_NAME: str = "issue"
             query = gql(
@@ -446,9 +447,9 @@ class LinearClient:
             for issue in issues_to_delete
         ]
         
-        delete_issue_results: list[LinearIssue] = await asyncio.gather(*delete_issue_tasks)
+        await asyncio.gather(*delete_issue_tasks)
 
-        return delete_issue_results
+        return issues_to_delete
 
     ###
     ### Helper
