@@ -1,4 +1,5 @@
 import asyncio
+from functools import partial
 
 import tweepy
 
@@ -11,9 +12,10 @@ class XClient:
 
     async def send_tweet(self, request: XSendTweetRequest) -> Tweet:
         loop = asyncio.get_event_loop()
-        response = await loop.run_in_executor(
-            None, self.client.create_tweet, text=request.text, user_auth=False
+        create_tweet_partial = partial(
+            self.client.create_tweet, text=request.text, user_auth=False
         )
+        response = await loop.run_in_executor(None, create_tweet_partial)
         return Tweet.model_validate(response.data)
 
     # def get_user_tweets(self, user_id: str, max_results: int = 10):
