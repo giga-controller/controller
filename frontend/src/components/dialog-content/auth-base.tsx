@@ -112,7 +112,7 @@ export default function AuthDialogContent({
           href={ROUTE[name]}
           className="px-3 rounded-md text-sm underline text-blue-700 dark:text-blue-300"
         >
-          Help
+          Setup Guide
         </Link>
       </div>
       <DialogDescription>OAuth Redirect URL</DialogDescription>
