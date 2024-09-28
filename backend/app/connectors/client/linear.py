@@ -1,7 +1,7 @@
 import json
 import logging
 from collections import defaultdict
-from typing import Optional
+import httpx
 
 import requests
 from gql import Client, gql
@@ -51,19 +51,20 @@ class LinearClient:
         )
         self.client = Client(transport=transport, fetch_schema_from_transport=True)
 
-    def query_grapql(self, query):
-        r = requests.post(LINEAR_API_URL, json={"query": query}, headers=self.headers)
+    async def query_grapql(self, query):
+        async with httpx.AsyncClient() as client:
+            r = await client.post(LINEAR_API_URL, json={"query": query}, headers=self.headers)
 
-        response = json.loads(r.content)
+        response = r.json()
 
         if "errors" in response:
             raise Exception(response["errors"])
 
         return response
 
-    def query_basic_resource(self, resource: str, subfields: str):
+    async def query_basic_resource(self, resource: str, subfields: str):
 
-        resource_response = self.query_grapql(
+        resource_response = await self.query_grapql(
             f"""
                 query Resource {{
                     {resource} {{
@@ -77,25 +78,25 @@ class LinearClient:
 
         return resource_response["data"][resource]["nodes"]
 
-    def teams(self) -> list[dict]:
-        return self.query_basic_resource(resource="teams", subfields="id,name")
+    async def teams(self) -> list[dict]:
+        return await self.query_basic_resource(resource="teams", subfields="id,name")
 
-    def states(self) -> list[dict]:
-        return self.query_basic_resource(resource="workflowStates", subfields="name")
+    async def states(self) -> list[dict]:
+        return await self.query_basic_resource(resource="workflowStates", subfields="name")
 
-    def projects(self) -> list[dict]:
-        return self.query_basic_resource(resource="projects", subfields="name")
+    async def projects(self) -> list[dict]:
+        return await self.query_basic_resource(resource="projects", subfields="name")
 
-    def users(self) -> list[dict]:
-        return self.query_basic_resource(resource="users", subfields="name")
+    async def users(self) -> list[dict]:
+        return await self.query_basic_resource(resource="users", subfields="name")
 
-    def labels(self) -> list[dict]:
-        return self.query_basic_resource(resource="issueLabels", subfields="name")
+    async def labels(self) -> list[dict]:
+        return await self.query_basic_resource(resource="issueLabels", subfields="name")
 
-    def titles(self) -> list[dict]:
-        return self.query_basic_resource(resource="issues", subfields="title")
+    async def titles(self) -> list[dict]:
+        return await self.query_basic_resource(resource="issues", subfields="title")
 
-    def create_issue(self, request: LinearCreateIssueRequest) -> LinearIssue:
+    async def create_issue(self, request: LinearCreateIssueRequest) -> LinearIssue:
         MUTATION_NAME = "issueCreate"
 
         mutation = gql(
@@ -154,7 +155,7 @@ class LinearClient:
                     if request.project
                     else None
                 ),
-                "teamId": self.teams()[0][
+                "teamId": await self.teams()[0][
                     "id"
                 ],  # QUICK FIX WE ONLY GET FROM FIRST TEAM (THIS IS A HACK)
             }

@@ -29,7 +29,6 @@ from app.models.integrations.docs import (
     DocsUpdateRequest,
 )
 from app.models.integrations.gmail import (
-    GmailDeleteEmailsRequest,
     GmailMarkAsReadRequest,
     GmailSendEmailRequest,
 )
