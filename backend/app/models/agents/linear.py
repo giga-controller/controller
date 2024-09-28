@@ -1,7 +1,9 @@
+import asyncio
 import logging
 from typing import Optional
 
 import openai
+from httpx import request
 from openai import OpenAI
 from pydantic import BaseModel
 
@@ -34,6 +36,7 @@ from app.models.integrations.linear import (
     User,
 )
 from app.models.query.base import Message, Role
+from app.utils.levenshtein import get_most_similar_string
 
 logging.basicConfig(level=logging.INFO)
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -512,51 +515,6 @@ class LinearRepairRequestAgent(Agent):
         enable_verification: bool,
     ) -> AgentResponse:
         response, function_name = await self.get_response(chat_history=chat_history)
-
-
-# def repair(query: LinearIssueQuery, access_token: str) -> dict[str, list]:
-#     """Repairs the query parameters by returning the most likely candidate"""
-#     linear_client = LinearClient(
-#         access_token=access_token,
-#     )
-#     zero_match_parameters: dict[str, list[BaseModel]] = (
-#         linear_client.get_zero_match_parameters(query=query)
-#     )
-
-#     for param, value_lst in zero_match_parameters.items():
-#         match param:
-#             case "title":
-#                 possible_titles: list[Title] = [
-#                     Title.model_validate(title) for title in linear_client.titles()
-#                 ]
-#             case "assignee":
-#                 possible_assignees: list[User] = [
-#                     User.model_validate(user) for user in linear_client.users()
-#                 ]
-#             case "creator":
-#                 possible_creators: list[User] = [
-#                     User.model_validate(user) for user in linear_client.users()
-#                 ]
-#             case "project":
-#                 possible_projects: list[Project] = [
-#                     Project.model_validate(project)
-#                     for project in linear_client.projects()
-#                 ]
-#             case "labels":
-#                 possible_labels: list[Label] = [
-#                     Label.model_validate(label) for label in linear_client.labels()
-#                 ]
-#             case _:
-#                 raise ValueError(f"Unknown parameter: {param}")
-
-
-LINEAR_REPAIR_REQUEST_AGENT = LinearRepairRequestAgent(
-    name="Linear Repair Request Agent",
-    integration_group=Integration.LINEAR,
-    model=OPENAI_GPT4O_MINI,
-    system_prompt="""You are an expert at repairing the request parameters passed into a Linear API call. Your task is to help a user repair the request parameters by choosing the most likely candidate given what the user has provided.""",
-    tools=[],  # Wil be populated at runtime
-)
 
 
 ##############################################

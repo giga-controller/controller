@@ -43,6 +43,11 @@ class Title(BaseModel):
     title: str
 
 
+class Team(BaseModel):
+    id: str
+    name: str
+
+
 class LinearIssue(BaseModel):
     id: Optional[str]
     number: Optional[int]

@@ -26,9 +26,11 @@ from app.models.integrations.linear import (
     LinearUpdateIssuesTitleRequest,
     Project,
     State,
+    Team,
     Title,
     User,
 )
+from app.utils.levenshtein import get_most_similar_string
 
 logging.getLogger("gql").setLevel(logging.WARNING)
 logging.getLogger("gql.transport.requests").setLevel(logging.WARNING)
@@ -83,26 +85,43 @@ class LinearClient:
 
         return resource_response["data"][resource]["nodes"]
 
-    async def teams(self) -> list[dict]:
-        return await self.query_basic_resource(resource="teams", subfields="id,name")
+    async def teams(self) -> list[Team]:
+        teams_dict: list[dict] = await self.query_basic_resource(
+            resource="teams", subfields="id,name"
+        )
+        return [Team.model_validate(team) for team in teams_dict]
 
-    async def states(self) -> list[dict]:
-        return await self.query_basic_resource(
+    async def states(self) -> list[State]:
+        states_dict: list[dict] = await self.query_basic_resource(
             resource="workflowStates", subfields="name"
         )
+        return [State(state["name"]) for state in states_dict]
 
-    async def projects(self) -> list[dict]:
-        return await self.query_basic_resource(resource="projects", subfields="name")
+    async def projects(self) -> list[Project]:
+        projects_dict: list[dict] = await self.query_basic_resource(
+            resource="projects", subfields="name"
+        )
+        return [Project.model_validate(project) for project in projects_dict]
 
-    async def users(self) -> list[dict]:
-        return await self.query_basic_resource(resource="users", subfields="name")
+    async def users(self) -> list[User]:
+        users_dict: list[dict] = await self.query_basic_resource(
+            resource="users", subfields="name"
+        )
+        return [User.model_validate(user) for user in users_dict]
 
-    async def labels(self) -> list[dict]:
-        return await self.query_basic_resource(resource="issueLabels", subfields="name")
+    async def labels(self) -> list[Label]:
+        labels_dict: list[dict] = await self.query_basic_resource(
+            resource="issueLabels", subfields="name"
+        )
+        return [Label.model_validate(label) for label in labels_dict]
 
-    async def titles(self) -> list[dict]:
-        return await self.query_basic_resource(resource="issues", subfields="title")
+    async def titles(self) -> list[Title]:
+        titles_dict: list[dict] = await self.query_basic_resource(
+            resource="issues", subfields="title"
+        )
+        return [Title.model_validate(title) for title in titles_dict]
 
+    # TODO: Add support for best match
     async def create_issue(self, request: LinearCreateIssueRequest) -> LinearIssue:
         MUTATION_NAME = "issueCreate"
 
@@ -147,14 +166,14 @@ class LinearClient:
         project_id_task = asyncio.create_task(
             self.get_id_by_name(name=request.project, target="projects")
         )
-        team_id_task = asyncio.create_task(self.teams())
+        teams_task = asyncio.create_task(self.teams())
 
         state_id, assignee_id, cycle_id, project_id, teams = await asyncio.gather(
             state_id_task,
             assignee_id_task,
             cycle_id_task,
             project_id_task,
-            team_id_task,
+            teams_task,
         )
 
         variables = {
@@ -168,9 +187,9 @@ class LinearClient:
                 "cycleId": cycle_id,
                 "labels": request.labels if request.labels else None,
                 "projectId": project_id,
-                "teamId": teams[0][
-                    "id"
-                ],  # QUICK FIX WE ONLY GET FROM FIRST TEAM (THIS IS A HACK)
+                "teamId": teams[
+                    0
+                ].id,  # QUICK FIX WE ONLY GET FROM FIRST TEAM (THIS IS A HACK)
             }
         }
 
@@ -229,12 +248,13 @@ class LinearClient:
 
             return flattened_issue_results
 
+        request.query = await self._repair_issue_query(query=request.query)
         return await self._get_issues_with_boolean_clause(issue_query=request.query)
 
-    def get_zero_match_parameters(
+    async def get_zero_match_issue_query_parameters(
         self, query: LinearIssueQuery
     ) -> dict[str, list[BaseModel]]:
-        """Returns a dictionary where the keys are the parameters provided in the query and the values are the paramter values that did not have any matches with any items"""
+        """Returns a dictionary where the keys are the parameters provided in the issue query and the values are the parameter values that did not have any matches with any items"""
 
         QUERY_OBJ_GROUP = "issues"
         QUERY_OBJ_LIST = "nodes"
@@ -250,10 +270,10 @@ class LinearClient:
             """
         )
 
-        def is_parameter_valid(filter_clause: dict) -> bool:
+        async def is_parameter_valid(filter_clause: dict) -> bool:
             """Returns True if the filter clause matches with at least one item and False otherwise"""
             test_variables = {"filter": {"and": [filter_clause]}}
-            test_result = self.client.execute(
+            test_result = await self.client.execute_async(
                 test_query, variable_values=test_variables
             )
             if test_result[QUERY_OBJ_GROUP][
@@ -265,36 +285,48 @@ class LinearClient:
         zero_match_parameters = defaultdict(list[BaseModel])
         query_dict = query.model_dump()
 
+        tasks = []
         for param, value_lst in query_dict.items():
             if not value_lst:  # No need to test if the parameter is not provided
                 continue
-
+            if param == "use_and_clause":
+                continue
             for value in value_lst:
                 match param:
                     case "title":
                         filter_clause = {"title": {"contains": value}}
-                        if is_parameter_valid(filter_clause=filter_clause):
-                            continue
-                        zero_match_parameters[param].append(Title(title=value))
                     case "assignee":
                         filter_clause = {"assignee": {"name": {"eq": value}}}
-                        if is_parameter_valid(filter_clause=filter_clause):
-                            continue
-                        zero_match_parameters[param].append(User(name=value))
                     case "creator":
                         filter_clause = {"creator": {"name": {"eq": value}}}
-                        if is_parameter_valid(filter_clause=filter_clause):
-                            continue
-                        zero_match_parameters[param].append(User(name=value))
                     case "project":
                         filter_clause = {"project": {"name": {"eq": value}}}
-                        if is_parameter_valid(filter_clause=filter_clause):
-                            continue
-                        zero_match_parameters[param].append(Project(name=value))
                     case "labels":
                         filter_clause = {"labels": {"some": {"name": {"in": value}}}}
-                        if is_parameter_valid(filter_clause=filter_clause):
-                            continue
+                    case _:
+                        log.info(
+                            f"{param} is not supported for query repair, skipping..."
+                        )
+                        continue
+                tasks.append(
+                    (
+                        param,
+                        value,
+                        asyncio.create_task(is_parameter_valid(filter_clause)),
+                    )
+                )
+
+        results = await asyncio.gather(*[task[2] for task in tasks])
+        for (param, value, _), result in zip(tasks, results):
+            if not result:
+                match param:
+                    case "title":
+                        zero_match_parameters[param].append(Title(title=value))
+                    case "assignee" | "creator":
+                        zero_match_parameters[param].append(User(name=value))
+                    case "project":
+                        zero_match_parameters[param].append(Project(name=value))
+                    case "labels":
                         zero_match_parameters[param].append(Label(name=value))
                     case _:
                         raise ValueError(f"Unknown parameter: {param}")
@@ -403,6 +435,9 @@ class LinearClient:
     ) -> list[LinearIssue]:
         variables = {}
 
+        # We dont need to repair the query if we using issue_ids as the filter condition
+        if not request.issue_ids:
+            request.query = await self._repair_issue_query(query=request.query)
         issues_to_update = await self.get_issues(request=request)
 
         mutation_name: str = "issueUpdate"
@@ -466,6 +501,10 @@ class LinearClient:
     async def delete_issues(
         self, request: LinearDeleteIssuesRequest
     ) -> list[LinearIssue]:
+
+        # We dont need to repair the query if we using issue_ids as the filter condition
+        if not request.issue_ids:
+            request.query = await self._repair_issue_query(query=request.query)
         issues_to_delete = await self.get_issues(request=request)
 
         MUTATION_NAME: str = "issueDelete"
@@ -613,6 +652,71 @@ class LinearClient:
             return labels[0]["id"]
 
         return None
+
+    ###
+    ### Repair
+    ###
+    async def _repair_issue_query(
+        self, query: Optional[LinearIssueQuery]
+    ) -> Optional[LinearIssueQuery]:
+        """Repairs the query parameters by returning the most likely candidate"""
+        if not query:
+            return None
+        zero_match_parameters_task = asyncio.create_task(
+            self.get_zero_match_issue_query_parameters(query=query)
+        )
+        possible_titles_task = asyncio.create_task(self.titles())
+        possible_users_task = asyncio.create_task(self.users())
+        possible_projects_task = asyncio.create_task(self.projects())
+        possible_labels_task = asyncio.create_task(self.labels())
+        zero_match_parameters, titles, users, projects, labels = await asyncio.gather(
+            zero_match_parameters_task,
+            possible_titles_task,
+            possible_users_task,
+            possible_projects_task,
+            possible_labels_task,
+        )
+        possible_titles: list[str] = [_title.title for _title in titles]
+        possible_users: list[str] = [_user.name for _user in users]
+        possible_projects: list[str] = [_project.name for _project in projects]
+        possible_labels: list[str] = [_label.name for _label in labels]
+        for param, value_lst in zero_match_parameters.items():
+            for value in value_lst:
+                match param:
+                    case "title":
+                        best_match_title: str = get_most_similar_string(
+                            target=value.title, candidates=possible_titles
+                        )
+                        query.title.append(best_match_title)
+                        query.title.remove(value.title)
+                    case "assignee":
+                        best_match_assignee: str = get_most_similar_string(
+                            target=value.name, candidates=possible_users
+                        )
+                        query.assignee.append(best_match_assignee)
+                        query.assignee.remove(value.name)
+                    case "creator":
+                        best_match_creator: str = get_most_similar_string(
+                            target=value.name, candidates=possible_users
+                        )
+                        query.creator.append(best_match_creator)
+                        query.creator.remove(value.name)
+                    case "project":
+                        best_match_project: str = get_most_similar_string(
+                            target=value.name, candidates=possible_projects
+                        )
+                        query.project.append(best_match_project)
+                        query.project.remove(value.name)
+                    case "labels":
+                        best_match_labels: str = get_most_similar_string(
+                            target=value.name, candidates=possible_labels
+                        )
+                        query.labels.append(best_match_labels)
+                        query.labels.remove(value.name)
+                    case _:
+                        raise ValueError(f"Unknown parameter: {param}")
+
+        return query
 
 
 async def _flatten_linear_response_issue(issue: dict) -> LinearIssue:
