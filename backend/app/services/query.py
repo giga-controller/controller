@@ -125,7 +125,7 @@ class QueryService:
                     client_secret=tokens[Integration.GMAIL].client_secret,
                 )
             case DocsCreateRequest.__name__:
-                client_response = create_document(
+                client_response = await create_document(
                     request=DocsCreateRequest.model_validate(client_argument),
                     access_token=tokens[Integration.DOCS].access_token,
                     refresh_token=tokens[Integration.DOCS].refresh_token,
@@ -133,7 +133,7 @@ class QueryService:
                     client_secret=tokens[Integration.DOCS].client_secret,
                 )
             case DocsGetRequest.__name__:
-                client_response = get_document(
+                client_response = await get_document(
                     request=DocsGetRequest.model_validate(client_argument),
                     access_token=tokens[Integration.DOCS].access_token,
                     refresh_token=tokens[Integration.DOCS].refresh_token,
@@ -141,7 +141,7 @@ class QueryService:
                     client_secret=tokens[Integration.DOCS].client_secret,
                 )
             case DocsUpdateRequest.__name__:
-                client_response = update_document(
+                client_response = await update_document(
                     request=DocsUpdateRequest.model_validate(client_argument),
                     access_token=tokens[Integration.DOCS].access_token,
                     refresh_token=tokens[Integration.DOCS].refresh_token,
