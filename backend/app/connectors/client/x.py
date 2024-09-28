@@ -12,7 +12,7 @@ class XClient:
     async def send_tweet(self, request: XSendTweetRequest) -> Tweet:
         loop = asyncio.get_event_loop()
         response = await loop.run_in_executor(
-            None, self.client.create_tweet, request.text, False
+            None, self.client.create_tweet, text=request.text, user_auth=False
         )
         return Tweet.model_validate(response.data)
 
