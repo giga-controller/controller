@@ -435,7 +435,9 @@ class LinearClient:
     ) -> list[LinearIssue]:
         variables = {}
 
-        request.query = await self._repair_issue_query(query=request.query)
+        # We dont need to repair the query if we using issue_ids as the filter condition
+        if not request.issue_ids:
+            request.query = await self._repair_issue_query(query=request.query)
         issues_to_update = await self.get_issues(request=request)
 
         mutation_name: str = "issueUpdate"
@@ -500,7 +502,9 @@ class LinearClient:
         self, request: LinearDeleteIssuesRequest
     ) -> list[LinearIssue]:
 
-        request.query = await self._repair_issue_query(query=request.query)
+        # We dont need to repair the query if we using issue_ids as the filter condition
+        if not request.issue_ids:
+            request.query = await self._repair_issue_query(query=request.query)
         issues_to_delete = await self.get_issues(request=request)
 
         MUTATION_NAME: str = "issueDelete"
