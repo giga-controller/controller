@@ -74,7 +74,7 @@ class LinearPostRequestAgent(Agent):
                             ),
                             function_to_verify=LinearCreateIssueRequest.__name__,
                         )
-                    return create_issue(
+                    return await create_issue(
                         request=response.choices[0]
                         .message.tool_calls[0]
                         .function.parsed_arguments,
@@ -88,11 +88,11 @@ class LinearPostRequestAgent(Agent):
             raise e
 
 
-def create_issue(request: LinearCreateIssueRequest, access_token: str) -> AgentResponse:
+async def create_issue(request: LinearCreateIssueRequest, access_token: str) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
-    created_issue: LinearIssue = linear_client.create_issue(request=request)
+    created_issue: LinearIssue = await linear_client.create_issue(request=request)
     return AgentResponse(
         agent=MAIN_TRIAGE_AGENT,
         message=Message(
@@ -144,17 +144,17 @@ class LinearGetRequestAgent(Agent):
             case _:
                 raise InferenceError(f"Function {function_name} not supported")
 
-        return get_issues(
+        return await get_issues(
             request=request,
             access_token=access_token,
         )
 
 
-def get_issues(request: LinearGetIssuesRequest, access_token: str) -> AgentResponse:
+async def get_issues(request: LinearGetIssuesRequest, access_token: str) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
-    retrieved_issues: list[LinearIssue] = linear_client.get_issues(request=request)
+    retrieved_issues: list[LinearIssue] = await linear_client.get_issues(request=request)
 
     if not retrieved_issues:
         return AgentResponse(
@@ -344,19 +344,19 @@ class LinearUpdateRequestAgent(Agent):
             case _:
                 raise InferenceError(f"Function {function_name} not supported")
 
-        return update_issues(
+        return await update_issues(
             request=response.choices[0].message.tool_calls[0].function.parsed_arguments,
             access_token=access_token,
         )
 
 
-def update_issues(
+async def update_issues(
     request: LinearFilterIssuesRequest, access_token: str
 ) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
-    updated_issues: list[LinearIssue] = linear_client.update_issues(request=request)
+    updated_issues: list[LinearIssue] = await linear_client.update_issues(request=request)
 
     if not updated_issues:
         return AgentResponse(
@@ -433,7 +433,7 @@ class LinearDeleteRequestAgent(Agent):
                         ),
                         function_to_verify=LinearDeleteIssuesRequest.__name__,
                     )
-                return delete_issues(
+                return await delete_issues(
                     request=response.choices[0]
                     .message.tool_calls[0]
                     .function.parsed_arguments,
@@ -443,13 +443,13 @@ class LinearDeleteRequestAgent(Agent):
                 raise InferenceError(f"Function {function_name} not supported")
 
 
-def delete_issues(
+async def delete_issues(
     request: LinearDeleteIssuesRequest, access_token: str
 ) -> AgentResponse:
     linear_client = LinearClient(
         access_token=access_token,
     )
-    deleted_issues: list[LinearIssue] = linear_client.delete_issues(request=request)
+    deleted_issues: list[LinearIssue] = await linear_client.delete_issues(request=request)
     if not deleted_issues:
         return AgentResponse(
             agent=SUMMARY_AGENT,

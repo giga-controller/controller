@@ -145,68 +145,68 @@ class QueryService:
                     client_secret=tokens[Integration.DOCS].client_secret,
                 )
             case LinearCreateIssueRequest.__name__:
-                client_response = create_issue(
+                client_response = await create_issue(
                     request=LinearCreateIssueRequest.model_validate(client_argument),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesStateRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesStateRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesAssigneeRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesAssigneeRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesTitleRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesTitleRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesDescriptionRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesDescriptionRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesLabelsRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesLabelsRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesCycleRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesCycleRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesEstimateRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesEstimateRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearUpdateIssuesProjectRequest.__name__:
-                client_response = update_issues(
+                client_response = await update_issues(
                     request=LinearUpdateIssuesProjectRequest.model_validate(
                         client_argument
                     ),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
             case LinearDeleteIssuesRequest.__name__:
-                client_response = delete_issues(
+                client_response = await delete_issues(
                     request=LinearDeleteIssuesRequest.model_validate(client_argument),
                     access_token=tokens[Integration.LINEAR].access_token,
                 )
