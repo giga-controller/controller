@@ -1,6 +1,12 @@
 # Controller
 
-**[Controller](https://usecontroller.com/)** is the Open-source ChatGPT that interacts with all your third party applications!
+**[Controller](https://usecontroller.com/)** is the Open-source ChatGPT that interacts with all your third-party applications! It serves as a Unified Platform across your tools such as Slack, Linear, Google Suite, etc.
+
+1. You can talk to a single application (e.g. "Get me all linear tickets that are owned by Mike, and set me as the owner")
+
+2. Talk across your applications (e.g. "Get me all emails sent by Mike that are about user feedback, and msg him on Slack and Discord about the feedback from users")
+
+3. Integrate with multiple applications
 
 ## Super quick demo
 https://github.com/user-attachments/assets/28894a96-19c3-4216-9f8e-a54c38567eee
