@@ -1,6 +1,6 @@
 # Controller
 
-**[Controller](https://usecontroller.com/)** is the Open-source ChatGPT that interacts with all your third-party applications! It serves as a Unified Platform across your tools such as Slack, Linear, Google Suite, etc.
+**[Controller](https://usecontroller.com/)** is a chat interface that interacts with all your third-party applications! It serves as a unified platform across your tools such as Slack, Linear, Google Suite, etc.
 
 1. You can talk to a single application (e.g. "Get me all linear tickets that are owned by Mike, and set me as the owner")
 
@@ -23,8 +23,6 @@ docker compose up --build
 ```
 
 3. Go to `localhost:3000` to start Controller!
-
-- **IMPORTANT**: If you find yourself stuck at the loading screen, try refreshing the page. This is a known issue as our code is not bundling optimally (we are figuring out a fix for it right now!)
 
 ## Self-Hosting
 
